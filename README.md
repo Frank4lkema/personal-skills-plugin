@@ -16,6 +16,12 @@ Beide skills lezen dezelfde 12-staps basis in
 skill (geen `SKILL.md`), dus het verschijnt niet als command — het is alleen de gedeelde
 spine die de twee wrappers inlezen.
 
+De inhoud is **harness-agnostisch** geschreven: waar Claude Code en Pi verschillen
+(subagents, hooks, arg-injectie, reviewbot-watcher) kiest de workflow de juiste aanpak op
+basis van wat je harness kan. Zo is er één bron voor beide. `allowed-tools` staat bewust
+**niet** in de frontmatter — dat veld heeft per harness een ander formaat en zou tools
+kunnen uitschakelen; zonder het veld gebruiken beide harnessen hun normale permissies.
+
 ```text
 skills/
 ├── _shared/

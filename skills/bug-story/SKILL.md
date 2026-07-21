@@ -3,16 +3,10 @@ name: bug-story
 description: >
   Use when you want to pick up and fully ship a Shortcut *bug* story end-to-end,
   where you first validate the root cause against real data before planning a fix.
-  Typically via `/bug-story <story-id>`. Triggers on a defect, regression, broken
+  Typically via a `bug-story <story-id>` command. Triggers on a defect, regression, broken
   behavior, or incident to fix — not a new feature.
 disable-model-invocation: true
 argument-hint: "[story-id]"
-allowed-tools: >
-  Read, Grep, Glob, Edit, Write, Task, Skill,
-  Bash(git *), Bash(gh *), Bash(plannotator:*),
-  Bash(bin/rails *), Bash(rails *), Bash(bundle *), Bash(rspec *),
-  Bash(npm run:*), Bash(npm test:*), Bash(pnpm *), Bash(yarn *),
-  Bash(curl *), Bash(jq *)
 ---
 
 # Bug Story
@@ -21,12 +15,16 @@ End-to-end workflow voor één Shortcut **bug**-story. Gelijk aan de gedeelde ba
 met **één extra stap (2b)**: eerst de oorzaak valideren met echte data via een
 read-only Ruby-script, vóórdat er een plan wordt gemaakt.
 
-De story-id is **$ARGUMENTS**.
+## Story-id
+
+De story-id krijg je mee als argument bij het command (in Claude Code als `$ARGUMENTS`;
+in Pi als de tekst die onder deze skill wordt toegevoegd). Gebruik die waarde overal waar
+de basis-workflow `<STORY_ID>` schrijft. Ontbreekt de id of is hij niet eenduidig, vraag
+er dan om voordat je begint.
 
 ## Uitvoeren
 
-Lees de gedeelde workflow en volg die stappen, waarbij je overal `<STORY_ID>`
-vervangt door `$ARGUMENTS`:
+Lees de gedeelde workflow en volg die stappen:
 
 **Lees:** `../_shared/story-base.md` (relatief aan deze skill-map — het bestand
 `skills/_shared/story-base.md` in deze plugin, naast deze skill-folder).
@@ -34,19 +32,19 @@ vervangt door `$ARGUMENTS`:
 Volgorde voor een bug-story:
 
 1. Story ophalen via de **`shortcut-story-api`-skill** (REST API — géén browser)
-2. Analyseren en uitleggen (Explore-subagent) — richt de analyse op de **oorzaak**,
-   niet alleen het symptoom.
+2. Analyseren en uitleggen (read-only; met subagent indien beschikbaar) — richt de analyse
+   op de **oorzaak**, niet alleen het symptoom.
 3. **→ STAP 2b hieronder: validatie met read-only Ruby-script (harde gate).**
 4. Plan opstellen via **Plannotator** (annotate → verwerken → akkoord)
-5. Branch aanmaken uit Shortcut (moet `/sc-$ARGUMENTS/` bevatten)
-6. Plan uitvoeren (multi-agent subagents) — **alleen de bug fixen**, geen extra
-   features/refactors tenzij nodig voor de fix.
+5. Branch aanmaken uit Shortcut (moet `sc-<STORY_ID>` bevatten)
+6. Plan uitvoeren (subagents indien beschikbaar, anders in de hoofdcontext) — **alleen de
+   bug fixen**, geen extra features/refactors tenzij nodig voor de fix.
 7. Self-review via **Plannotator Review**
 8. Pull request maken
 9. Wachten op Greptile
 10. Greptile-comments verwerken
 11. Nieuwe route? → PO-rechten onder de story
-12. Testen op localhost (subagent)
+12. Testen op localhost
 13. Vastleggen in Obsidian (type: bug) — plak de validatie-output in de
     "Validatie (alleen bug)"-sectie als bewijs.
 

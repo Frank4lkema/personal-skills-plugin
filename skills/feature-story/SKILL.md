@@ -2,16 +2,10 @@
 name: feature-story
 description: >
   Use when you want to pick up and fully ship a Shortcut *feature* story end-to-end
-  (build new functionality), typically via `/feature-story <story-id>`. Triggers on a
-  new feature, enhancement, or user story to implement — not a bug fix.
+  (build new functionality), typically via a `feature-story <story-id>` command. Triggers
+  on a new feature, enhancement, or user story to implement — not a bug fix.
 disable-model-invocation: true
 argument-hint: "[story-id]"
-allowed-tools: >
-  Read, Grep, Glob, Edit, Write, Task, Skill,
-  Bash(git *), Bash(gh *), Bash(plannotator:*),
-  Bash(bin/rails *), Bash(rails *), Bash(bundle *), Bash(rspec *),
-  Bash(npm run:*), Bash(npm test:*), Bash(pnpm *), Bash(yarn *),
-  Bash(curl *), Bash(jq *)
 ---
 
 # Feature Story
@@ -19,12 +13,16 @@ allowed-tools: >
 End-to-end workflow voor één Shortcut **feature**-story: van ophalen tot vastleggen
 in Obsidian.
 
-De story-id is **$ARGUMENTS**.
+## Story-id
+
+De story-id krijg je mee als argument bij het command (in Claude Code als `$ARGUMENTS`;
+in Pi als de tekst die onder deze skill wordt toegevoegd). Gebruik die waarde overal waar
+de basis-workflow `<STORY_ID>` schrijft. Ontbreekt de id of is hij niet eenduidig, vraag
+er dan om voordat je begint.
 
 ## Uitvoeren
 
-Lees de gedeelde workflow en volg die stappen **ongewijzigd**, waarbij je overal
-`<STORY_ID>` vervangt door `$ARGUMENTS`:
+Lees de gedeelde workflow en volg die stappen **ongewijzigd**:
 
 **Lees:** `../_shared/story-base.md` (relatief aan deze skill-map — het bestand
 `skills/_shared/story-base.md` in deze plugin, naast deze skill-folder).
@@ -32,17 +30,17 @@ Lees de gedeelde workflow en volg die stappen **ongewijzigd**, waarbij je overal
 Feature-story = de gedeelde basis zoals hij is:
 
 1. Story ophalen via de **`shortcut-story-api`-skill** (REST API — géén browser)
-2. Analyseren en uitleggen (Explore-subagent)
+2. Analyseren en uitleggen (read-only; met subagent indien beschikbaar)
 3. Plan opstellen via **Plannotator** (annotate → verwerken → akkoord)
-4. Branch aanmaken uit Shortcut (moet `/sc-$ARGUMENTS/` bevatten)
-5. Plan uitvoeren (multi-agent subagents)
+4. Branch aanmaken uit Shortcut (moet `sc-<STORY_ID>` bevatten)
+5. Plan uitvoeren (subagents indien beschikbaar, anders in de hoofdcontext)
 6. Self-review via **Plannotator Review**
 7. Pull request maken
 8. Wachten op Greptile
 9. Greptile-comments verwerken
 10. Nieuwe route? → PO-rechten onder de story
-11. Testen op localhost (subagent)
+11. Testen op localhost
 12. Vastleggen in Obsidian (type: feature)
 
 > Er is **geen** stap 2b (validatie-script) — dat is alleen voor `bug-story`.
-> Zet bij het Obsidian-logboek `Type: feature` en laat de "Validatie (alleen bug)"-sectie leeg.
+> Zet bij het Obsidian-logboek `Type: feature` en zet bij "Validatie (alleen bug)" `n.v.t.`.
