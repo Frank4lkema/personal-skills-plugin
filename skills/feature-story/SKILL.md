@@ -24,8 +24,8 @@ er dan om voordat je begint.
 
 Lees de gedeelde workflow en volg die stappen **ongewijzigd**:
 
-**Lees:** `../_shared/story-base.md` (relatief aan deze skill-map — het bestand
-`skills/_shared/story-base.md` in deze plugin, naast deze skill-folder).
+**Lees:** `story-base.md` (in deze skill-map, naast dit bestand). Het is een
+gegenereerde kopie van `skills/_shared/story-base.md` — wijzigingen horen in die bron.
 
 Feature-story = de gedeelde basis zoals hij is:
 

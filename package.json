@@ -1,6 +1,6 @@
 {
   "name": "personal-skills-plugin",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "End-to-end Shortcut story workflows als skills voor Claude Code en Pi.",
   "keywords": [
     "pi-package",
@@ -11,6 +11,9 @@
   ],
   "author": "Frank Alkema",
   "license": "MIT",
+  "scripts": {
+    "sync": "bash scripts/sync-shared.sh"
+  },
   "pi": {
     "skills": [
       "./skills"
