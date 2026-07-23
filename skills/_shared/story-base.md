@@ -60,6 +60,8 @@ Leg in eigen woorden uit **wat er technisch moet gebeuren**:
 - Welke onderdelen/bestanden raakt dit waarschijnlijk?
 - Welke aannames of open vragen zijn er?
 - Welke risico's / edge cases?
+- Raakt dit een **interface**? Stel dan nu al vast of het een **Pulse-interface** is
+  (zie stap 5) en verwerk dat in je plan.
 
 Verken de codebase **read-only**, beknopt, en lees alleen wat relevant is voor de story:
 - **Met subagents:** gebruik een read-only Explore-subagent zodat de hoofdcontext niet
@@ -109,6 +111,25 @@ Voer het goedgekeurde plan uit op deze branch en houd zelf de regie over alle wi
   parallel kunnen werken; integreer daarna de resultaten.
 - **Zonder subagents:** voer uit in de hoofdcontext. Delegeer geen gelijktijdige edits aan
   losse processen; een aparte, testgerichte run is optioneel als het werk echt onafhankelijk is.
+
+### Werk je aan een interface? → check op Pulse
+
+Raakt het werk een **interface** (view, pagina, form, component, layout, modal, tabel)?
+Bepaal dan **eerst** of deze app **Pulse UI** gebruikt:
+
+```bash
+grep -rn "pulse" Gemfile package.json 2>/dev/null
+rg -l "pulse_head|Pulse::|Pulse::Backend" app 2>/dev/null | head
+```
+
+- **Is het een Pulse-interface?** Dan **moet** je de **`pulse-ui`-skill** gebruiken en met
+  Pulse-componenten bouwen (`ui.<naam>`, `Pulse::FormBuilder`), niet met losse
+  HTML/Tailwind-markup of zelfgemaakte componenten.
+  - **Claude Code:** roep de Skill-tool aan (skill `rails-toolkit:pulse-ui`).
+  - **Andere harnessen (bv. Pi):** `read` de locatie van die skill zoals je harness die in
+    de lijst met beschikbare skills toont, en volg hem.
+  - Twijfel je of een component bestaat? Zoek het op in de skill; verzin geen eigen variant.
+- **Geen Pulse?** Volg de bestaande UI-conventies van de repo.
 
 Zorgen hooks in jouw setup automatisch voor formatten/linten van gewijzigde files? Vertrouw
 daarop. Zo niet, draai de stack-specifieke formatter/linter en relevante tests dan zelf, en
