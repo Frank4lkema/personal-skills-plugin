@@ -198,15 +198,20 @@ Controleer of er in deze wijziging een **nieuwe route** is toegevoegd.
 Is er een nieuwe route én zijn daar nieuwe **rechten/permissies** voor nodig die een
 **PO** moet instellen?
 
-- **Zo ja:** zet een duidelijke comment **onder de story** in Shortcut met: welke route,
-  welke rechten, en dat de PO die moet aanmaken/toewijzen (@-mention de PO indien mogelijk).
+- **Zo ja:** zet een comment **onder de story** in Shortcut. **Houd die comment kort:**
+  alleen de route + dat er een rol/recht aangepast moet worden. Eén regel, geen uitleg,
+  geen samenvatting van de wijziging, geen context over de implementatie.
+  - Format: `Nieuwe route: <route> — rol/recht aanpassen.`
+  - Voorbeeld: `Nieuwe route: /admin/exports — rol/recht aanpassen.`
+  - Weet je de benodigde permissie zeker? Dan mag die er nog achter, maximaal een paar
+    woorden: `Nieuwe route: /admin/exports — rol/recht aanpassen (admin.exports.view).`
   - Via Shortcut MCP: gebruik de "add comment to story"-tool op story `<STORY_ID>`.
   - Fallback via API:
     ```bash
     curl -s -X POST \
       -H "Content-Type: application/json" \
       -H "Shortcut-Token: $SHORTCUT_API_TOKEN" \
-      -d '{"text":"⚠️ Nieuwe route toegevoegd — PO-actie nodig: rechten instellen. Route: <route>. Benodigde permissie(s): <permissie>."}' \
+      -d '{"text":"Nieuwe route: <route> — rol/recht aanpassen."}' \
       "https://api.app.shortcut.com/api/v3/stories/<STORY_ID>/comments"
     ```
 - **Zo nee:** niets doen.
