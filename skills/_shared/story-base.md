@@ -28,6 +28,41 @@ Claude" e.d.) in een commit-message. Commit op naam van de gebruiker, zonder co-
 
 ---
 
+## 0. Hervatten? — eerst kijken of er al werk ligt
+
+Deze workflow loopt vaak over meerdere sessies: ik moet een plan goedkeuren, Greptile
+reageert asynchroon, en soms plak jij output terug. Begin daarom **nooit blind bij stap 1** —
+controleer eerst of er al werk voor `sc-<STORY_ID>` bestaat.
+
+```bash
+git fetch --quiet origin 2>/dev/null || true
+git branch --all --list "*sc-<STORY_ID>*"                     # bestaande branch?
+gh pr list --search "sc-<STORY_ID>" --state all \
+  --json number,state,url,headRefName 2>/dev/null             # bestaande PR?
+ls -1 plan-sc-<STORY_ID>.md 2>/dev/null                       # bestaand plan?
+```
+
+Bepaal op basis van wat je vindt waar je verder gaat:
+
+| Gevonden | Verder bij |
+| --- | --- |
+| Niets | Stap 1 — normaal beginnen |
+| Alleen een plan-bestand | Stap 3 — plan afmaken en laten annoteren |
+| Branch, geen PR | Stap 5 — uitvoeren; kijk eerst met `git log` en `git diff main...HEAD` wat er al staat |
+| Open PR, nog geen Greptile-reactie | Stap 8 — wachten op review |
+| Open PR mét Greptile-comments | Stap 9 — comments verwerken |
+| PR gemerged of gesloten | Stap 10–12 — route/PO-check, localhost-test, Obsidian |
+
+**Harde regels bij hervatten:**
+- Meld wat je gevonden hebt en welk instappunt je voorstelt, en **wacht op mijn bevestiging**
+  voordat je stappen overslaat. Ga nooit stilzwijgend halverwege verder.
+- Een gevonden plan-bestand betekent **niet** dat ik het heb goedgekeurd. De goedkeuringsgate
+  van stap 3 sla je nooit over op basis van het bestaan van dat bestand — vraag expliciet of
+  het plan al akkoord is.
+- Haal de story (stap 1) **altijd** op, ook bij hervatten: je hebt de titel, de
+  acceptatiecriteria en de branch-naam nodig.
+- Bestaat er al een branch? Gebruik díe, maak geen tweede.
+
 ## 1. Story ophalen (Shortcut — via de API-skill)
 
 Haal Shortcut-story `sc-<STORY_ID>` op via de **`shortcut-story-api`-skill** met operatie
@@ -84,6 +119,32 @@ Stel een concreet, stapsgewijs implementatieplan op en laat mij het annoteren me
 3. Verwerk de teruggekomen annotaties in het plan.
 4. Herhaal 2–3 tot ik akkoord ben.
 
+### Het plan bevat de concrete code — niet alleen een beschrijving
+
+Ik wil in het plan **zien hoe de code eruit komt te zien**, zodat ik op de code zelf kan
+annoteren in plaats van op een samenvatting. Een plan dat alleen beschrijft *wat* er gaat
+gebeuren ("we voegen validatie toe aan het formulier") is niet genoeg.
+
+Geef daarom per stap:
+
+- Het **bestandspad**, en of het bestand nieuw is of wordt gewijzigd.
+- De **daadwerkelijke code** in een codeblok:
+  - **Nieuw bestand** → de volledige inhoud zoals die eruit komt te zien.
+  - **Bestaand bestand** → een diff-achtig fragment met genoeg omliggende regels om te zien
+    waar het landt, en wat er precies weg gaat en bij komt.
+- Bij een keuze tussen aanpakken: laat het verschil in code zien, niet alleen in woorden.
+
+Wat je **niet** hoeft uit te schrijven: puur mechanisch werk waar niets aan te beslissen valt
+(imports bijwerken, een string op tien plekken hernoemen, gegenereerde bestanden). Benoem dat
+in één regel. Alles wat het ontwerp bepaalt — namen, signatures, datamodel, componentkeuze,
+control flow, queries — hoort er wél als code in.
+
+Deze code is een **voorstel**, geen uitvoering: schrijf in deze stap nog niets naar de
+repository en maak nog geen branch. Dat gebeurt pas in stap 4 en 5.
+
+> Raakt het een Pulse-interface (zie stap 5)? Laat de code dan al met Pulse-componenten zien
+> (`ui.<naam>`, `Pulse::FormBuilder`), niet met losse HTML/Tailwind die je later nog omzet.
+
 **Harde gate:** ga pas naar stap 4 nadat ik het geannoteerde plan heb goedgekeurd.
 
 ## 4. Branch aanmaken (uit Shortcut)
@@ -106,6 +167,11 @@ en vraag mij om de juiste naam — anders linkt Shortcut de branch niet.
 ## 5. Plan uitvoeren
 
 Voer het goedgekeurde plan uit op deze branch en houd zelf de regie over alle wijzigingen.
+
+Bouw de code zoals die **in het goedgekeurde plan staat** — dat is waar ik akkoord op heb
+gegeven. Blijkt tijdens het bouwen dat het anders moet (de code werkt niet, een aanname klopt
+niet, er is een betere aanpak)? Meld dat expliciet met de reden en het verschil, in plaats van
+stilzwijgend iets anders te bouwen dan ik heb goedgekeurd.
 
 - **Met subagents:** verdeel onafhankelijke brokken werk over meerdere subagents zodat ze
   parallel kunnen werken; integreer daarna de resultaten.
@@ -270,15 +336,17 @@ Notitie-inhoud (template):
 # sc-<STORY_ID> — <story-titel>
 
 - **Datum:** <vandaag>
-- **Type:** <feature | bug>
-- **Branch:** <branch-naam>
-- **PR:** <pr-link>
+- **Type:** <feature | bug | feedback>
+- **Uitkomst:** <geïmplementeerd | geen wijziging — reden>
+- **Branch:** <branch-naam of n.v.t.>
+- **PR:** <pr-link of n.v.t.>
 
 ## Wat is gebouwd / gefixt
 <korte samenvatting van de wijzigingen>
 
-## Validatie (alleen bug)
-<read-only script-output die de oorzaak bevestigde / n.v.t. bij feature>
+## Validatie / scope-check
+<bug: de read-only script-output die de oorzaak bevestigde — feedback: de uitkomst van de
+scope-check — feature: n.v.t.>
 
 ## Greptile
 <verwerkt: welke fixes / geen comments / timeout>

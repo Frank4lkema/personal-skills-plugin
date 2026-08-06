@@ -1,7 +1,7 @@
 {
   "name": "story-skills",
-  "description": "End-to-end Shortcut story workflows als skills: /feature-story en /bug-story, met een gedeelde 12-staps basis-workflow.",
-  "version": "1.2.0",
+  "description": "End-to-end Shortcut story workflows als skills: /feature-story, /bug-story en /feedback-story, met een gedeelde, hervatbare basis-workflow.",
+  "version": "1.5.0",
   "author": {
     "name": "Frank Alkema"
   },

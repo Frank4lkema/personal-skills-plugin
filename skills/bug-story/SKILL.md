@@ -31,6 +31,7 @@ gegenereerde kopie van `skills/_shared/story-base.md` — wijzigingen horen in d
 
 Volgorde voor een bug-story:
 
+0. Hervatten-check — ligt er al werk voor deze story? (basis-stap 0)
 1. Story ophalen via de **`shortcut-story-api`-skill** (REST API — géén browser)
 2. Analyseren en uitleggen (read-only; met subagent indien beschikbaar) — richt de analyse
    op de **oorzaak**, niet alleen het symptoom.
@@ -46,7 +47,7 @@ Volgorde voor een bug-story:
 11. Nieuwe route? → PO-rechten onder de story
 12. Testen op localhost
 13. Vastleggen in Obsidian (type: bug) — plak de validatie-output in de
-    "Validatie (alleen bug)"-sectie als bewijs.
+    "Validatie / scope-check"-sectie als bewijs, en zet `Uitkomst: geïmplementeerd`.
 
 ---
 

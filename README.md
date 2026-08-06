@@ -9,9 +9,12 @@ een gedeelde, stap-voor-stap basis-workflow.
 | Skill | Command | Wat het doet |
 | --- | --- | --- |
 | `feature-story` | `/feature-story <story-id>` | Pakt een Shortcut **feature**-story end-to-end op: ophalen → analyseren → plannen → branch → uitvoeren → PR → review → localhost-test → vastleggen in Obsidian. |
-| `bug-story` | `/bug-story <story-id>` | Zelfde workflow als hierboven, met **één extra harde gate (stap 2b)**: eerst de oorzaak valideren met een read-only Ruby-script tegen echte data, vóórdat er een plan komt. |
+| `bug-story` | `/bug-story <story-id>` | Zelfde workflow, met **één extra harde gate (stap 2b)**: eerst de oorzaak valideren met een read-only Ruby-script tegen echte data, vóórdat er een plan komt. |
+| `feedback-story` | `/feedback-story <story-id>` | Zelfde workflow, met als gate 2b een **scope-check**: past de melding in klein bestek? Zo niet (of is er geen wijziging nodig), dan eindigt de story zonder code — comment onder de story + Obsidian-notitie. |
 
-Beide skills volgen dezelfde 12-staps basis. De **bron** daarvan staat in
+Alle drie de skills volgen dezelfde basis, die begint met een **hervatten-check (stap 0)**:
+bestaat er al een branch, PR of plan voor deze story, dan stelt de workflow voor om daar
+verder te gaan in plaats van bij stap 1. De **bron** van de basis staat in
 [`skills/_shared/story-base.md`](skills/_shared/story-base.md); elke skill-map bevat een
 **gegenereerde kopie** (`story-base.md`) zodat elke skill self-contained is en ook los
 installeerbaar via tools als `npx skills`. De kopieën houd je bij met `npm run sync`.
@@ -25,12 +28,15 @@ kunnen uitschakelen; zonder het veld gebruiken beide harnessen hun normale permi
 ```text
 skills/
 ├── _shared/
-│   └── story-base.md      ← BRON van de gedeelde 12-staps workflow (hier bewerken)
+│   └── story-base.md      ← BRON van de gedeelde workflow (hier bewerken)
 ├── feature-story/
 │   ├── SKILL.md           ← /feature-story <id>
 │   └── story-base.md      ← gegenereerde kopie (npm run sync)
-└── bug-story/
-    ├── SKILL.md           ← /bug-story <id>
+├── bug-story/
+│   ├── SKILL.md           ← /bug-story <id>
+│   └── story-base.md      ← gegenereerde kopie (npm run sync)
+└── feedback-story/
+    ├── SKILL.md           ← /feedback-story <id>
     └── story-base.md      ← gegenereerde kopie (npm run sync)
 ```
 
@@ -111,9 +117,11 @@ Hoe nieuwe versies van de skills bij de gebruiker terechtkomen verschilt per har
 | **Pi** | ❌ Nee | `pi update --all` (of `--extensions`) trekt alle git-packages naar de laatste versie. Werkt zolang je zonder vaste `@ref` installeerde. |
 | **Cursor e.a.** (`npx skills`) | ❌ Nee | `npx skills update`. Volledig automatisch? Zet het in een cron-regel (`crontab -e`), bv. dagelijks om 9:00: `0 9 * * * npx -y skills update`. |
 
-Voor maintainers: Claude Code vergelijkt op het `version`-veld in
-`.claude-plugin/plugin.json` — **bump die versie bij elke wijziging**, anders zien
-plugin-gebruikers de update niet.
+Voor maintainers: het versienummer staat op **drie** plekken en die moeten gelijk blijven —
+`.claude-plugin/marketplace.json` (hierop detecteert Claude Code updates),
+`.claude-plugin/plugin.json` en `package.json` (Pi/npm). **Bump alle drie bij elke
+wijziging**, anders zien gebruikers de update niet. `npm run sync` controleert dit en
+faalt als ze uiteenlopen.
 
 ## Afhankelijkheden
 
@@ -135,7 +143,9 @@ niet volledig:
   `skills/_shared/story-base.md` aan en draai daarna **`npm run sync`** om de kopieën in
   de skill-mappen bij te werken (commit de kopieën mee). Bewerk de kopieën nooit direct —
   ze worden overschreven.
-- **Alleen feature** of **alleen bug** → pas de betreffende `SKILL.md` aan (de bug-wrapper
-  bevat de extra validatie-gate 2b).
+- **Eén skill apart** → pas de betreffende `SKILL.md` aan. De bug-wrapper bevat de
+  validatie-gate 2b, de feedback-wrapper de scope-check 2b plus de afslag zonder code.
+- **Nieuwe skill erbij** → maak `skills/<naam>/SKILL.md` en voeg `<naam>` toe aan de lijst in
+  `scripts/sync-shared.sh`, anders krijgt die map geen kopie van de basis.
 
 Vervang overal `<STORY_ID>` mentaal door het meegegeven argument (`$ARGUMENTS`).

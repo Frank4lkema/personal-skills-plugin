@@ -8,8 +8,8 @@
     {
       "name": "story-skills",
       "source": "./",
-      "description": "End-to-end Shortcut story workflows als skills: /feature-story en /bug-story, met een gedeelde 12-staps basis-workflow.",
-      "version": "1.1.0"
+      "description": "End-to-end Shortcut story workflows als skills: /feature-story, /bug-story en /feedback-story, met een gedeelde, hervatbare basis-workflow.",
+      "version": "1.5.0"
     }
   ]
 }

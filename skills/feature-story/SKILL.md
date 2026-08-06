@@ -29,6 +29,7 @@ gegenereerde kopie van `skills/_shared/story-base.md` — wijzigingen horen in d
 
 Feature-story = de gedeelde basis zoals hij is:
 
+0. Hervatten-check — ligt er al werk voor deze story? (basis-stap 0)
 1. Story ophalen via de **`shortcut-story-api`-skill** (REST API — géén browser)
 2. Analyseren en uitleggen (read-only; met subagent indien beschikbaar)
 3. Plan opstellen via **Plannotator** (annotate → verwerken → akkoord)
@@ -42,5 +43,8 @@ Feature-story = de gedeelde basis zoals hij is:
 11. Testen op localhost
 12. Vastleggen in Obsidian (type: feature)
 
-> Er is **geen** stap 2b (validatie-script) — dat is alleen voor `bug-story`.
-> Zet bij het Obsidian-logboek `Type: feature` en zet bij "Validatie (alleen bug)" `n.v.t.`.
+> Er is **geen** stap 2b — dat is alleen voor `bug-story` (validatie-script) en
+> `feedback-story` (scope-check). Een feature-story levert altijd code op; er is dus geen
+> afslag zonder PR.
+> Zet bij het Obsidian-logboek `Type: feature`, `Uitkomst: geïmplementeerd` en zet bij
+> "Validatie / scope-check" `n.v.t.`.
