@@ -1,6 +1,6 @@
 {
   "name": "personal-skills-plugin",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "End-to-end Shortcut story workflows als skills voor Claude Code en Pi.",
   "keywords": [
     "pi-package",

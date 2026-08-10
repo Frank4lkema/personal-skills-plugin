@@ -272,6 +272,53 @@ done
 - **Timeout of geen comments?** Meld dit expliciet en doe niet alsof de review afgerond is;
   vraag of je langer moet wachten of later moet terugkomen.
 
+### 9a. Hoe een reactie op GitHub eruitziet
+
+Reacties onder een PR staan **op mijn naam**. Schrijf ze dus zoals ik ze schrijf, niet zoals
+een agent ze zou schrijven. Dit is de belangrijkste regel van deze stap: liever te kort dan
+te compleet.
+
+**Vorm**
+- **Nederlands**, tenzij de thread of de repo Engels is — dan Engels. Spiegel de taal van
+  degene op wie je reageert.
+- **Eén tot drie zinnen.** Meestal één. Loopt het langer, dan is het geen comment maar een
+  discussie: plaats de conclusie in één zin en geef de volledige redenering aan **mij** in
+  de chat.
+- **Platte tekst.** Geen kopjes, geen bullets, geen **bold**/*cursief*, geen em-dash-ketens.
+  Backticks alleen om een echte methode-, kolom- of klassenaam, niet om elk woord.
+- Een codeblok, een link naar de patterns/docs of een verwijzing naar een andere PR mag —
+  dat vervangt vaak drie zinnen uitleg.
+- Zet `@greptile` aan het eind als de bot opnieuw moet kijken; `@naam` als je een collega
+  iets vraagt.
+
+**Per soort reactie**
+- **Overgenomen:** `Fixed` of `Opgelost in <sha>: <in één regel wat er nu gebeurt>.` Verder
+  niets — geen bewijsvoering, geen testverslag, geen uitleg waarom de fix klopt.
+- **Niet overgenomen:** één zin met de reden, zonder pleidooi. "Bewuste keuze",
+  "This will never happen", "Nope, want de limit kan 10 zijn en dan …". Eventueel één zin
+  context erachter, meer niet.
+- **Later:** zeg dat het bewust niet in deze PR zit en waarom in een halve zin.
+  "Bewust niet in deze PR — die opruimstory staat later in de sprint."
+- **Zelf een vraag:** stel hem gewoon. "Waarom heb je hier een aparte controller? In de
+  story staat alleen een section op de afspraak."
+
+**Niet doen** (dit zijn de tells van een agent-comment): openen met "Klopt deels, maar…",
+meerdere alinea's om één afwijzing te onderbouwen, elke aanname staven met specs, regels en
+commit-hashes, jargon als "blast radius", of afsluiten met "dat is een eigen story waard".
+Als het argument echt zo groot is, hoort het in een story of in een gesprek — niet in een
+review-thread.
+
+**Voorbeelden zoals ik ze plaats**
+
+```text
+Bewuste keuze
+Fixed
+Opgelost in a7d8a80: de endpoint zoekt nu alleen actieve orders met status failed/rejected.
+Dit kan alleen in een race condition gebeuren. De redirect werkt dan prima, dus laten we het zo. @greptile
+Nee, dit is niet meer volgens de huidige conventies van Pulse: https://pulse.mobiel.io/docs/patterns/5-fields
+Wil je dit niet gewoon in een method op het model zetten? Zoals in #8578.
+```
+
 ## 10. Nieuwe route? → rechten voor de PO
 
 Controleer of er in deze wijziging een **nieuwe route** is toegevoegd.
