@@ -66,7 +66,7 @@ Bepaal op basis van wat je vindt waar je verder gaat:
 | Branch, geen PR | Stap 5 — uitvoeren; kijk eerst met `git log` en `git diff main...HEAD` wat er al staat |
 | Open PR, nog geen Greptile-reactie | Stap 8 — wachten op review |
 | Open PR mét Greptile-comments | Stap 9 — comments verwerken |
-| PR gemerged of gesloten | Stap 10–12 — route/PO-check, localhost-test, Obsidian |
+| PR gemerged of gesloten | Stap 10–13 — route/PO-check, staging, test, Obsidian |
 
 **Harde regels bij hervatten:**
 - Meld wat je gevonden hebt en welk instappunt je voorstelt, en **wacht op mijn bevestiging**
@@ -372,9 +372,45 @@ Is er een nieuwe route én zijn daar nieuwe **rechten/permissies** voor nodig di
     ```
 - **Zo nee:** niets doen.
 
-## 11. Testen op localhost
+## 11. Naar staging deployen? (vragen)
 
-### 11a. Vraag eerst met welke gebruiker (verplicht)
+Vraag mij of deze branch naar **staging** moet. **Deploy nooit ongevraagd:** staging-kanalen
+zijn gedeeld, dus je zet er zo het werk van een collega mee overheen.
+
+Kijk eerst of deze repo staging-deploys via een tag doet, en welke kanalen in gebruik zijn:
+
+```bash
+ls .github/workflows 2>/dev/null | grep -i staging
+git fetch --tags --quiet origin 2>/dev/null || true
+git tag --list '*#*' --sort=-creatordate | head -20
+```
+
+Herkent de repo dat patroon — een workflow die triggert op tags als `<kanaal>#<naam>` — stel
+dan de vraag in één keer, zodat ik hem in één antwoord kan beantwoorden:
+
+- Wil je dat ik deze branch naar staging zet?
+- Zo ja, op **welk kanaal**? (bv. `12`, `13`, `14` — de tags hierboven laten zien wat er nu
+  op welk kanaal staat)
+- Welke naam achter de `#`? Stel zelf de feature-naam uit de branch voor.
+
+Pas ná een expliciet akkoord **mét kanaalnummer**:
+
+```bash
+git push origin HEAD                       # branch moet up-to-date zijn
+TAG="<kanaal>#<naam>"
+git tag "$TAG" && git push origin "$TAG"
+gh run list --limit 3                      # check dat de deploy-workflow start
+```
+
+- Bestaat de tag al (kanaal is in gebruik voor iets anders)? **Beslis dat niet zelf.** Meld
+  wat er nu op dat kanaal staat en vraag of ik hem mag verplaatsen (`git tag -f` +
+  `git push -f origin "$TAG"`) of dat je een ander kanaal moet pakken.
+- Meld na afloop het kanaal en de tag, zodat ik weet waar ik moet kijken.
+- Heeft deze repo geen staging-workflow? Meld dat in één regel en sla de stap over.
+
+## 12. Testen
+
+### 12a. Vraag eerst met welke gebruiker (verplicht)
 
 Groene tests en een schone diff zeggen weinig over wat er in het scherm gebeurt. **Vraag mij
 daarom, vóórdat je gaat testen, met welke gebruiker ik het getest wil hebben.** Raad geen
@@ -393,16 +429,16 @@ Stel de vraag concreet en in één keer, zodat ik hem in één antwoord kan bean
 Antwoord ik niet of weet ik het niet? Ga dan niet alsnog gokken: test wat je zonder login
 kunt testen, en meld expliciet dat de UI-check op een gebruiker wacht.
 
-### 11b. Zelf testen
+### 12b. Zelf testen
 
-Start de app lokaal volgens de repository-instructies, log in als de gebruiker uit 11a en
+Start de app lokaal volgens de repository-instructies, log in als de gebruiker uit 12a en
 verifieer de acceptatiecriteria van story `<STORY_ID>` end-to-end **via de UI** — dus echt
 door het scherm heen klikken, niet alleen via console of specs. Rapporteer pass/fail met
 concreet bewijs (screenshot, URL, wat je zag) en sluit alle gestarte servers/processen na
 afloop af. Bij een failure: herstel, draai de relevante checks opnieuw en herhaal de test.
 
 - **Met subagents:** laat een subagent de app draaien en de scenario's testen ("Start de app
-  lokaal, log in als `<gebruiker uit 11a>`, test de acceptatiecriteria van story `<STORY_ID>`
+  lokaal, log in als `<gebruiker uit 12a>`, test de acceptatiecriteria van story `<STORY_ID>`
   end-to-end via de UI, rapporteer pass/fail met bewijs, sluit de server daarna af"). Een
   `SubagentStop`-hook checkt daarna of het testen echt is uitgevoerd.
 - **Zonder subagents:** doe het in de hoofdcontext of in een geïsoleerde, testgerichte run
@@ -413,7 +449,7 @@ afloop af. Bij een failure: herstel, draai de relevante checks opnieuw en herhaa
 
 > Vul je eigen start-commando in, bv. `bin/rails server`, `npm run dev`, `docker compose up -d`.
 
-### 11c. Vraag mij om het na te lopen in de UI
+### 12c. Vraag mij om het na te lopen in de UI
 
 Je eigen test is niet de laatste stap. **Vraag mij daarna om het zelf in de UI te
 controleren** en zeg er expliciet bij met welke gebruiker. Zeg niet dat de story klaar is
@@ -422,7 +458,7 @@ voordat ik dat bevestigd heb.
 Houd die vraag kort en klikbaar — geen samenvatting van de implementatie:
 
 ```text
-Kun je dit even nalopen op localhost als <gebruiker/rol>?
+Kun je dit even nalopen op <localhost of staging-kanaal> als <gebruiker/rol>?
 1. Ga naar <URL>
 2. <handeling>
 3. Verwacht: <resultaat>
@@ -430,11 +466,14 @@ Kun je dit even nalopen op localhost als <gebruiker/rol>?
 Zelf getest als <gebruiker>: <wat wel/niet werkte>. Nog niet gecontroleerd: <wat je niet kon testen>.
 ```
 
+Staat het na stap 11 op staging? Noem dan het kanaal en de tag erbij, zodat ik kan kiezen of
+ik het daar of op localhost nakijk.
+
 Vertel er eerlijk bij wat je **niet** hebt kunnen testen (geen account, geen data, flow niet
 te bereiken). Meld ik een probleem? Herstel het, draai de relevante checks opnieuw en vraag
 opnieuw om een UI-check.
 
-## 12. Vastleggen in Obsidian
+## 13. Vastleggen in Obsidian
 
 Leg de afgeronde story vast in je Obsidian-vault via de **Obsidian MCP**. Maak een nieuwe
 notitie aan (of werk een bestaande bij) met een korte samenvatting, zodat je een
@@ -454,6 +493,7 @@ Notitie-inhoud (template):
 - **Uitkomst:** <geïmplementeerd | geen wijziging — reden>
 - **Branch:** <branch-naam of n.v.t.>
 - **PR:** <pr-link of n.v.t.>
+- **Staging:** <kanaal + tag, bv. `13#msisdn` — of niet gedeployed>
 
 ## Wat is gebouwd / gefixt
 <korte samenvatting van de wijzigingen>
@@ -478,6 +518,7 @@ scope-check — feature: n.v.t.>
 ## Afronden
 
 Rapporteer beknopt: branch-naam, wat is gebouwd/gefixt, PR-link, Greptile-status, eventuele
-PO-actie onder de story, de testuitkomst (met welke gebruiker getest, en wat je niet hebt
-kunnen testen), en het pad van de aangemaakte Obsidian-notitie. Noem de story pas klaar als
-ik de UI-check uit stap 11c bevestigd heb.
+PO-actie onder de story, de staging-tag/het kanaal (of dat er niet gedeployed is), de
+testuitkomst (met welke gebruiker getest, en wat je niet hebt kunnen testen), en het pad van
+de aangemaakte Obsidian-notitie. Noem de story pas klaar als
+ik de UI-check uit stap 12c bevestigd heb.

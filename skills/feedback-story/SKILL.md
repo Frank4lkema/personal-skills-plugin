@@ -54,8 +54,9 @@ Volgorde voor een feedback-story:
 9. Wachten op Greptile
 10. Greptile-comments verwerken
 11. Nieuwe route? → PO-rechten onder de story
-12. Testen op localhost — eerst vragen met welke gebruiker, daarna mij om een UI-check vragen
-13. Vastleggen in Obsidian (type: feedback) — zet bij "Validatie / scope-check" de uitkomst
+12. Naar staging? → vragen of het gedeployed moet en op welk kanaal
+13. Testen — eerst vragen met welke gebruiker, daarna mij om een UI-check vragen
+14. Vastleggen in Obsidian (type: feedback) — zet bij "Validatie / scope-check" de uitkomst
     van stap 2b, en bij "Uitkomst" `geïmplementeerd`.
 
 ---
@@ -122,12 +123,12 @@ te maken.
        -d '{"text":"Past niet binnen klein bestek: <reden>. Nodig: <beslissing PO>."}' \
        "https://api.app.shortcut.com/api/v3/stories/<STORY_ID>/comments"
      ```
-2. **Leg het vast in Obsidian** volgens basis-stap 12, met:
+2. **Leg het vast in Obsidian** volgens basis-stap 13, met:
    - `Type: feedback`
    - `Uitkomst: geen wijziging — <A: werkt zoals bedoeld / dubbel / PO-beslissing, of B: te groot>`
    - `Branch: n.v.t.` en `PR: n.v.t.`
    - Onder "Validatie / scope-check": welke criteria uit 2b de doorslag gaven.
-3. **Sla de stappen 4 t/m 12 over.** Geen branch, geen PR, geen localhost-test.
+3. **Sla de stappen 4 t/m 13 over.** Geen branch, geen PR, geen staging-deploy, geen test.
 4. **Rapporteer** aan mij: de uitkomst, de reden, de geplaatste comment en het pad van de
    Obsidian-notitie.
 

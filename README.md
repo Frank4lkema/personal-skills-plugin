@@ -8,7 +8,7 @@ een gedeelde, stap-voor-stap basis-workflow.
 
 | Skill | Command | Wat het doet |
 | --- | --- | --- |
-| `feature-story` | `/feature-story <story-id>` | Pakt een Shortcut **feature**-story end-to-end op: ophalen → analyseren → plannen → branch → uitvoeren → PR → review → localhost-test → vastleggen in Obsidian. |
+| `feature-story` | `/feature-story <story-id>` | Pakt een Shortcut **feature**-story end-to-end op: ophalen → analyseren → plannen → branch → uitvoeren → PR → review → staging → test → vastleggen in Obsidian. |
 | `bug-story` | `/bug-story <story-id>` | Zelfde workflow, met **één extra harde gate (stap 2b)**: eerst de oorzaak valideren met een read-only Ruby-script tegen echte data, vóórdat er een plan komt. |
 | `feedback-story` | `/feedback-story <story-id>` | Zelfde workflow, met als gate 2b een **scope-check**: past de melding in klein bestek? Zo niet (of is er geen wijziging nodig), dan eindigt de story zonder code — comment onder de story + Obsidian-notitie. |
 
