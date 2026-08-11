@@ -45,7 +45,7 @@ Volgorde voor een bug-story:
 9. Wachten op Greptile
 10. Greptile-comments verwerken
 11. Nieuwe route? → PO-rechten onder de story
-12. Testen op localhost
+12. Testen op localhost — eerst vragen met welke gebruiker, daarna mij om een UI-check vragen
 13. Vastleggen in Obsidian (type: bug) — plak de validatie-output in de
     "Validatie / scope-check"-sectie als bewijs, en zet `Uitkomst: geïmplementeerd`.
 

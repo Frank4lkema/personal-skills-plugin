@@ -33,7 +33,8 @@ Claude" e.d.) in een commit-message. Commit op naam van de gebruiker, zonder co-
 ## 0. Hervatten? — eerst kijken of er al werk ligt
 
 Deze workflow loopt vaak over meerdere sessies: ik moet een plan goedkeuren, Greptile
-reageert asynchroon, en soms plak jij output terug. Begin daarom **nooit blind bij stap 1** —
+reageert asynchroon, ik moet zeggen met welke gebruiker je mag testen en het daarna zelf in
+de UI nalopen, en soms plak jij output terug. Begin daarom **nooit blind bij stap 1** —
 controleer eerst of er al werk voor `sc-<STORY_ID>` bestaat.
 
 ```bash
@@ -354,20 +355,65 @@ Is er een nieuwe route én zijn daar nieuwe **rechten/permissies** voor nodig di
 
 ## 11. Testen op localhost
 
-Start de app lokaal volgens de repository-instructies en verifieer de acceptatiecriteria
-van story `<STORY_ID>` end-to-end. Rapporteer pass/fail met concreet bewijs en sluit alle
-gestarte servers/processen na afloop af. Bij een failure: herstel, draai de relevante checks
-opnieuw en herhaal de localhost-test.
+### 11a. Vraag eerst met welke gebruiker (verplicht)
+
+Groene tests en een schone diff zeggen weinig over wat er in het scherm gebeurt. **Vraag mij
+daarom, vóórdat je gaat testen, met welke gebruiker ik het getest wil hebben.** Raad geen
+account, verzin geen inloggegevens en pak niet zomaar de eerste user uit de seeds — het
+gedrag hangt vaak af van rol en rechten, en met de verkeerde gebruiker test je de
+acceptatiecriteria niet.
+
+Stel de vraag concreet en in één keer, zodat ik hem in één antwoord kan beantwoorden:
+
+- **Welke gebruiker/rol?** (bv. e-mailadres of rol — backoffice, PO, klant, admin)
+- Zijn er **meerdere rollen** die dit raken? Dan: welke moet ik zeker zien werken?
+- Klopt de **URL/het scherm** waar ik moet zijn (bv. `/pulse/procurement/expected_fundings`)?
+- Is er iets nodig om bij de situatie te komen — een specifieke **order/record**, een
+  feature-flag, of een status waarin het record moet staan?
+
+Antwoord ik niet of weet ik het niet? Ga dan niet alsnog gokken: test wat je zonder login
+kunt testen, en meld expliciet dat de UI-check op een gebruiker wacht.
+
+### 11b. Zelf testen
+
+Start de app lokaal volgens de repository-instructies, log in als de gebruiker uit 11a en
+verifieer de acceptatiecriteria van story `<STORY_ID>` end-to-end **via de UI** — dus echt
+door het scherm heen klikken, niet alleen via console of specs. Rapporteer pass/fail met
+concreet bewijs (screenshot, URL, wat je zag) en sluit alle gestarte servers/processen na
+afloop af. Bij een failure: herstel, draai de relevante checks opnieuw en herhaal de test.
 
 - **Met subagents:** laat een subagent de app draaien en de scenario's testen ("Start de app
-  lokaal, test de acceptatiecriteria van story `<STORY_ID>` end-to-end, rapporteer pass/fail
-  met bewijs, sluit de server daarna af"). Een `SubagentStop`-hook checkt daarna of het testen
-  echt is uitgevoerd.
+  lokaal, log in als `<gebruiker uit 11a>`, test de acceptatiecriteria van story `<STORY_ID>`
+  end-to-end via de UI, rapporteer pass/fail met bewijs, sluit de server daarna af"). Een
+  `SubagentStop`-hook checkt daarna of het testen echt is uitgevoerd.
 - **Zonder subagents:** doe het in de hoofdcontext of in een geïsoleerde, testgerichte run
   (bv. `pi -p "... test uitsluitend de acceptatiecriteria van story <STORY_ID> ... wijzig geen
   code en sluit de server na afloop af"`).
+- **Met browserautomatisering** (bv. Claude in Chrome/Playwright): gebruik die om de flow
+  echt door te klikken in plaats van alleen de pagina op te halen.
 
 > Vul je eigen start-commando in, bv. `bin/rails server`, `npm run dev`, `docker compose up -d`.
+
+### 11c. Vraag mij om het na te lopen in de UI
+
+Je eigen test is niet de laatste stap. **Vraag mij daarna om het zelf in de UI te
+controleren** en zeg er expliciet bij met welke gebruiker. Zeg niet dat de story klaar is
+voordat ik dat bevestigd heb.
+
+Houd die vraag kort en klikbaar — geen samenvatting van de implementatie:
+
+```text
+Kun je dit even nalopen op localhost als <gebruiker/rol>?
+1. Ga naar <URL>
+2. <handeling>
+3. Verwacht: <resultaat>
+
+Zelf getest als <gebruiker>: <wat wel/niet werkte>. Nog niet gecontroleerd: <wat je niet kon testen>.
+```
+
+Vertel er eerlijk bij wat je **niet** hebt kunnen testen (geen account, geen data, flow niet
+te bereiken). Meld ik een probleem? Herstel het, draai de relevante checks opnieuw en vraag
+opnieuw om een UI-check.
 
 ## 12. Vastleggen in Obsidian
 
@@ -404,7 +450,7 @@ scope-check — feature: n.v.t.>
 <ja: welke route + rechten / nee>
 
 ## Test (localhost)
-<pass/fail + bewijs>
+<met welke gebruiker/rol getest + pass/fail + bewijs — en of ik het zelf in de UI bevestigd heb>
 
 ## Geleerd / aandachtspunten
 <optioneel>
@@ -413,4 +459,6 @@ scope-check — feature: n.v.t.>
 ## Afronden
 
 Rapporteer beknopt: branch-naam, wat is gebouwd/gefixt, PR-link, Greptile-status, eventuele
-PO-actie onder de story, de testuitkomst, en het pad van de aangemaakte Obsidian-notitie.
+PO-actie onder de story, de testuitkomst (met welke gebruiker getest, en wat je niet hebt
+kunnen testen), en het pad van de aangemaakte Obsidian-notitie. Noem de story pas klaar als
+ik de UI-check uit stap 11c bevestigd heb.

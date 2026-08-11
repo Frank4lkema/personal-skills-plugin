@@ -40,7 +40,7 @@ Feature-story = de gedeelde basis zoals hij is:
 8. Wachten op Greptile
 9. Greptile-comments verwerken
 10. Nieuwe route? → PO-rechten onder de story
-11. Testen op localhost
+11. Testen op localhost — eerst vragen met welke gebruiker, daarna mij om een UI-check vragen
 12. Vastleggen in Obsidian (type: feature)
 
 > Er is **geen** stap 2b — dat is alleen voor `bug-story` (validatie-script) en
