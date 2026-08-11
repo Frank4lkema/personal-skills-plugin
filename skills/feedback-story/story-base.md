@@ -376,39 +376,38 @@ Is er een nieuwe route én zijn daar nieuwe **rechten/permissies** voor nodig di
 
 ## 11. Naar staging deployen? (vragen)
 
-Vraag mij of deze branch naar **staging** moet. **Deploy nooit ongevraagd:** staging-kanalen
+Vraag mij of deze branch naar **staging** moet. **Deploy nooit ongevraagd:** staging-omgevingen
 zijn gedeeld, dus je zet er zo het werk van een collega mee overheen.
 
-Kijk eerst of deze repo staging-deploys via een tag doet, en welke kanalen in gebruik zijn:
+Het commando is altijd hetzelfde:
 
 ```bash
-ls .github/workflows 2>/dev/null | grep -i staging
-git fetch --tags --quiet origin 2>/dev/null || true
-git tag --list '*#*' --sort=-creatordate | head -20
+staging deploy <kanaal> <naam>
+# voorbeeld: staging deploy sprint11 master
 ```
 
-Herkent de repo dat patroon — een workflow die triggert op tags als `<kanaal>#<naam>` — stel
-dan de vraag in één keer, zodat ik hem in één antwoord kan beantwoorden:
+- **`<kanaal>`** = de sprint waar we nu in zitten, als één woord: `sprint<nummer>`. Leid dat
+  af uit de iteration/sprint van story `<STORY_ID>` die je in stap 1 hebt opgehaald. Noem het
+  nummer dat je gevonden hebt bij je vraag, zodat ik het kan corrigeren. Kun je de sprint niet
+  vinden? Vraag het dan — gok geen sprintnummer.
+- **`<naam>`** = de naam van de omgeving. Houd het op **één woord**, kort en makkelijk te
+  onthouden (`master`, `msisdn`, `whitelist`). Geen story-id, geen branch-naam vol streepjes,
+  geen datum.
 
-- Wil je dat ik deze branch naar staging zet?
-- Zo ja, op **welk kanaal**? (bv. `12`, `13`, `14` — de tags hierboven laten zien wat er nu
-  op welk kanaal staat)
-- Welke naam achter de `#`? Stel zelf de feature-naam uit de branch voor.
+Stel de vraag in één keer, zodat ik hem in één antwoord kan beantwoorden:
 
-Pas ná een expliciet akkoord **mét kanaalnummer**:
+- Zal ik dit naar staging zetten?
+- Kanaal `sprint<NN>` — dat is de sprint van deze story; klopt dat?
+- Naam `<jouw voorstel van één woord>` — of wil je een andere?
 
-```bash
-git push origin HEAD                       # branch moet up-to-date zijn
-TAG="<kanaal>#<naam>"
-git tag "$TAG" && git push origin "$TAG"
-gh run list --limit 3                      # check dat de deploy-workflow start
-```
+Draai het commando **pas ná een expliciet akkoord**. Zorg dat je werk gepusht is (`git push
+origin HEAD`) voordat je deployt, anders zet je een oude stand neer. Meld daarna het kanaal
+en de naam terug, zodat ik weet waar ik moet kijken.
 
-- Bestaat de tag al (kanaal is in gebruik voor iets anders)? **Beslis dat niet zelf.** Meld
-  wat er nu op dat kanaal staat en vraag of ik hem mag verplaatsen (`git tag -f` +
-  `git push -f origin "$TAG"`) of dat je een ander kanaal moet pakken.
-- Meld na afloop het kanaal en de tag, zodat ik weet waar ik moet kijken.
-- Heeft deze repo geen staging-workflow? Meld dat in één regel en sla de stap over.
+- Staat er al iets anders op die omgeving? **Beslis niet zelf dat je het overschrijft** —
+  meld wat je ziet en vraag of ik een andere naam wil.
+- Bestaat het `staging`-commando niet in deze omgeving? Meld dat in één regel en sla de stap
+  over; ga niet zelf een deploy in elkaar knutselen met tags of workflows.
 
 ## 12. Testen
 
@@ -468,7 +467,7 @@ Kun je dit even nalopen op <localhost of staging-kanaal> als <gebruiker/rol>?
 Zelf getest als <gebruiker>: <wat wel/niet werkte>. Nog niet gecontroleerd: <wat je niet kon testen>.
 ```
 
-Staat het na stap 11 op staging? Noem dan het kanaal en de tag erbij, zodat ik kan kiezen of
+Staat het na stap 11 op staging? Noem dan het kanaal en de naam erbij, zodat ik kan kiezen of
 ik het daar of op localhost nakijk.
 
 Vertel er eerlijk bij wat je **niet** hebt kunnen testen (geen account, geen data, flow niet
@@ -495,7 +494,7 @@ Notitie-inhoud (template):
 - **Uitkomst:** <geïmplementeerd | geen wijziging — reden>
 - **Branch:** <branch-naam of n.v.t.>
 - **PR:** <pr-link of n.v.t.>
-- **Staging:** <kanaal + tag, bv. `13#msisdn` — of niet gedeployed>
+- **Staging:** <kanaal + naam, bv. `sprint11 master` — of niet gedeployed>
 
 ## Wat is gebouwd / gefixt
 <korte samenvatting van de wijzigingen>
@@ -520,7 +519,7 @@ scope-check — feature: n.v.t.>
 ## Afronden
 
 Rapporteer beknopt: branch-naam, wat is gebouwd/gefixt, PR-link, Greptile-status, eventuele
-PO-actie onder de story, de staging-tag/het kanaal (of dat er niet gedeployed is), de
+PO-actie onder de story, het staging-kanaal + de naam (of dat er niet gedeployed is), de
 testuitkomst (met welke gebruiker getest, en wat je niet hebt kunnen testen), en het pad van
 de aangemaakte Obsidian-notitie. Noem de story pas klaar als
 ik de UI-check uit stap 12c bevestigd heb.
