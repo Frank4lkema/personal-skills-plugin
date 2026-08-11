@@ -26,6 +26,20 @@ geen stap wordt overgeslagen; voeg geen tijdelijk `TODO.md` aan de repository to
 `Co-authored-by: ... Anthropic`/`Claude`-trailer of andere AI-attributie ("Generated with
 Claude" e.d.) in een commit-message. Commit op naam van de gebruiker, zonder co-author.
 
+**Geldt voor élke regel code die je schrijft: geen inline code-comments.** Zet geen
+uitleg-comments in de code (`#`, `//`, `/* */`, `<!-- -->`) — ook niet "even voor de
+duidelijkheid", ook niet boven een methode, en ook niet in tests, migrations, views of
+config. Dat is niet onze huisstijl en ik wil het niet terugzien in de diff. Laat de code
+zichzelf uitleggen met duidelijke namen en kleine methodes. Moet er echt iets toegelicht
+worden, dan hoort dat in de PR-beschrijving, onder de story of in de review-thread — niet
+in het bestand.
+
+- **Enige uitzondering:** comments die functioneel iets dóén, geen uitleg zijn. Denk aan
+  `# frozen_string_literal: true`, `rubocop:disable`/`eslint-disable`, `@ts-expect-error`,
+  annotaties die tooling leest, licentieheaders en comments die een generator zelf plaatst.
+- **Bestaande comments laat je staan.** Ruim ze niet op als bijvangst van deze story; dat
+  maakt de diff groter dan de wijziging.
+
 ---
 
 ## 0. Hervatten? — eerst kijken of er al werk ligt
@@ -214,6 +228,13 @@ plannotator review
 
 Verwerk de teruggekomen feedback (of leg kort uit waarom je iets niet overneemt). Draai na
 wijzigingen de relevante checks opnieuw voordat je de PR opent.
+
+Loop hierbij zelf ook nog even de diff na op **inline comments** die je hebt toegevoegd, en
+haal ze weg (op de functionele uitzonderingen bovenaan na):
+
+```bash
+git diff main...HEAD | grep -nE '^\+\s*(#|//|/\*|<!--)'
+```
 
 ## 7. Pull request maken
 
