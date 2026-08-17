@@ -1,6 +1,6 @@
 {
   "name": "personal-skills-plugin",
-  "version": "1.12.0",
+  "version": "1.12.1",
   "description": "Persoonlijke workflow-skills voor Claude Code en Pi: Shortcut-stories en security-patching.",
   "keywords": [
     "pi-package",

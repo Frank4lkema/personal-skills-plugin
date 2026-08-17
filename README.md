@@ -11,7 +11,7 @@ een gedeelde, stap-voor-stap basis-workflow.
 | `feature-story` | `/feature-story <story-id>` | Pakt een Shortcut **feature**-story end-to-end op: ophalen → analyseren → plannen → branch → uitvoeren → PR → review → staging → test → vastleggen in Obsidian. |
 | `bug-story` | `/bug-story <story-id>` | Zelfde workflow, met **één extra harde gate (stap 2b)**: eerst de oorzaak valideren met een read-only Ruby-script tegen echte data, vóórdat er een plan komt. |
 | `feedback-story` | `/feedback-story <story-id>` | Zelfde workflow, met als gate 2b een **scope-check**: past de melding in klein bestek? Zo niet (of is er geen wijziging nodig), dan eindigt de story zonder code — comment onder de story + Obsidian-notitie. |
-| `patch-repo` | `/patch-repo [owner/repo …] [--auto]` | Patcht een repo voor **security-updates**: open Dependabot-alerts ophalen → laagst veilige doelversie per package → jij kiest wat er mee moet → per package bumpen, verifiëren en een PR openen. Staat los van de story-workflow. |
+| `patch-repo` | `/patch-repo [owner/repo …] [--auto]` | Patcht een repo voor **security-updates**: open Dependabot-alerts ophalen → laagst veilige doelversie per package → jij kiest wat er mee moet → per package bumpen, verifiëren en een PR openen. Met `--auto` vervalt die keuze en patcht hij onbewaakt (geen majors, niets forceren) — bedoeld voor een cron-run. Staat los van de story-workflow. |
 
 De drie story-skills volgen dezelfde basis, die begint met een **hervatten-check (stap 0)**:
 bestaat er al een branch, PR of plan voor deze story, dan stelt de workflow voor om daar

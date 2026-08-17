@@ -43,6 +43,9 @@ antwoord kan geven? Dan sla je de keuzegate in stap 3 over en volg je deze vaste
 - Bestaat er al een open PR met dezelfde branchnaam → overslaan en melden.
 - Zijn de tests rood? **Open de PR toch**, met `Tests: rood: <wat faalt>` in de body — dan
   ziet een mens het. Verzin geen fixes voor falende tests die niets met de bump te maken hebben.
+- Kun je de suite in deze omgeving helemaal niet draaien (geen database, geen services, geen
+  bundler)? Zet dan `Tests: niet gedraaid — verificatie via CI op de PR` in de body. **Schrijf
+  nooit "groen" voor een suite die je niet gedraaid hebt.**
 - Geen alerts of niets te doen? Zeg dat in één regel per repo en stop.
 
 De rest van de workflow (branchnaam, één PR per package, PR-beschrijving van één zin,
