@@ -112,9 +112,14 @@ auto-fix-workflow, dan slaat die workflow jouw package over in plaats van er een
 naast te zetten:
 
 ```bash
-git switch main && git pull --ff-only
+BASE=$(gh repo view "$REPO" --json defaultBranchRef -q .defaultBranchRef.name)   # master of main
+git switch "$BASE" && git pull --ff-only
 git switch -c "security/auto-fix-<package>-<doelversie>"
 ```
+
+**Ga nooit uit van `main`** — meerdere repo's draaien op `master`. En werk nooit in een
+checkout waar ik zelf in zit: staat er ongecommit werk of sta je op een feature-branch, dan
+stop je en zeg je dat. Bij een onbewaakte run gebruik je een eigen, aparte kloon.
 
 **Ruby (`rubygems`)** — conservatief, zodat alleen dit gem beweegt:
 
