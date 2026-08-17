@@ -142,25 +142,38 @@ gh pr create --repo "$REPO" \
   --body "<zie hieronder>"
 ```
 
-PR-body, kort:
+**De PR-beschrijving is maximaal één zin.** Daarna alleen de twee regels die een reviewer
+echt nodig heeft: breaking changes en teststatus. Geen samenvatting van de advisory, geen
+opsomming van wat je gedaan hebt, geen test-plan, geen boilerplate.
 
 ```markdown
-## Security fix: `<package>` → <doelversie>
+`<package>` <huidige versie> → <doelversie> voor [<GHSA>](<advisory-url>) (<severity>).
 
-**Advisory:** [<GHSA>](<url>) — severity **<severity>**
-<samenvatting uit de advisory, één regel>
-
-**Tests:** <groen / rood + wat faalt>
-
-### Changes
-<uitvoer van git diff --stat>
+**Breaking changes:** <nee — patch-release | ja: <wat> | onbekend: <waarom>>
+**Tests:** <groen | rood: <wat faalt>>
 ```
 
-- **Geen** `Co-authored-by`-trailer of AI-attributie in de commit — commit op mijn naam.
-- Meerdere packages? Herhaal stap 4 t/m 6 per package, telkens vanaf een verse `main`.
+Bepaal die breaking-changes-regel op basis van de release notes of het changelog tussen de
+huidige en de doelversie:
+
+- Alleen een patch-versie omhoog en niets in het changelog? → `nee — patch-release`.
+- Kruist het een **minor** of staan er gedragswijzigingen, deprecations of verwijderde API's
+  in? → `ja` met in een paar woorden wát er verandert.
+- Kun je het changelog niet vinden of niet beoordelen? → `onbekend` met de reden. **Schrijf
+  nooit "nee" omdat je het niet gecontroleerd hebt** — dat is precies de regel waarop een
+  reviewer afgaat.
+- Zijn er naast dit package nog andere regels in de lockfile bewogen, noem dat hier ook in
+  een halve zin.
+
+**Harde regel voor de commit:** zet NOOIT een `Co-authored-by`-trailer of andere
+AI-attributie in de commit-message — niet van Claude Code, niet van Codex, Cursor of welke
+tool dan ook. Geen "Generated with"-regels, geen 🤖-footer, ook niet in de PR-body. De commit
+staat op mijn naam.
+
+Meerdere packages? Herhaal stap 4 t/m 6 per package, telkens vanaf een verse `main`.
 
 ## 7. Afronden
 
 Rapporteer in één blok: welke packages gepatcht zijn (van → naar) met PR-link, welke alerts
-zijn blijven staan en waarom (geen fix beschikbaar, major nodig, al een open PR), en de
-teststatus per PR.
+zijn blijven staan en waarom (geen fix beschikbaar, major nodig, al een open PR), en per PR
+de teststatus plus of er breaking changes verwacht worden.
