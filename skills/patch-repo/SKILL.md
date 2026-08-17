@@ -3,30 +3,51 @@ name: patch-repo
 description: >
   Use when you want to patch a repository for security updates — read its open Dependabot
   alerts, pick the lowest safe target version per package, bump it, verify, and open one PR
-  per package. Typically via a `patch-repo [owner/repo]` command. Triggers on security
-  patching, vulnerability alerts, CVE/GHSA follow-up or dependency bumps for security.
+  per package. Typically via a `patch-repo [owner/repo …] [--auto]` command. Triggers on
+  security patching, vulnerability alerts, CVE/GHSA follow-up or dependency bumps for
+  security.
 disable-model-invocation: true
-argument-hint: "[owner/repo]"
+argument-hint: "[owner/repo …] [--auto]"
 ---
 
 # Patch Repo
 
-Patch één repository voor **security-updates**: alerts ophalen → doelversies bepalen → mij
-laten kiezen → per package bumpen, verifiëren en een PR openen.
+Patch één of meer repositories voor **security-updates**: alerts ophalen → doelversies
+bepalen → mij laten kiezen → per package bumpen, verifiëren en een PR openen.
 
 Dit is bewust **geen** algemene dependency-update. Je bumpt alleen wat nodig is om een
 advisory te dichten, en niets meer.
 
 ## Welke repo
 
-De repo krijg je mee als argument (`owner/repo`). Ontbreekt hij, gebruik dan de repo waar we
-in staan:
+De repo's krijg je mee als argument (`owner/repo`, meerdere mag). Ontbreken ze, gebruik dan
+de repo waar we in staan:
 
 ```bash
 gh repo view --json nameWithOwner -q .nameWithOwner
 ```
 
-Is dat er ook niet, vraag er dan om — raad geen repo.
+Is dat er ook niet, vraag er dan om — raad geen repo. Meerdere repo's? Werk ze **één voor
+één** volledig af en zet ze niet door elkaar; sluit af met één gecombineerd rapport.
+
+## Onbewaakt draaien (`--auto`)
+
+Staat `--auto` in het argument, of draai je vanuit een scheduled/cron-run waar niemand
+antwoord kan geven? Dan sla je de keuzegate in stap 3 over en volg je deze vaste regel:
+
+- Patch elk package naar de doelversie uit stap 2, en **niets anders**.
+- **Kruist de doelversie een major → niet patchen.** Zet hem in het eindrapport als "vraagt
+  een major, eigen story nodig".
+- **Haalt `--conservative` de doelversie niet → niet patchen.** Nooit `--force`, nooit een
+  handmatige `Gemfile`-pin, nooit een kale `bundle update`. Zet in het rapport wát het blokkeert.
+- Bestaat er al een open PR met dezelfde branchnaam → overslaan en melden.
+- Zijn de tests rood? **Open de PR toch**, met `Tests: rood: <wat faalt>` in de body — dan
+  ziet een mens het. Verzin geen fixes voor falende tests die niets met de bump te maken hebben.
+- Geen alerts of niets te doen? Zeg dat in één regel per repo en stop.
+
+De rest van de workflow (branchnaam, één PR per package, PR-beschrijving van één zin,
+breaking-changes-regel, geen AI-attributie) blijft **exact hetzelfde** als bij een
+interactieve run.
 
 ## 1. Alerts ophalen
 
@@ -69,7 +90,7 @@ wat je mag doen:
 - of één specifiek package?
 
 **Begin niet met bumpen voordat ik geantwoord heb.** Is er niets te doen, zeg dat in één regel
-en stop.
+en stop. (Bij `--auto` sla je deze gate over — zie boven.)
 
 Check daarna eerst of het werk al loopt — meerdere repo's draaien een wekelijkse
 `auto-fix-vulnerabilities`-workflow die dezelfde branchnaam gebruikt:
