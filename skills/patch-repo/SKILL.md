@@ -1,0 +1,166 @@
+---
+name: patch-repo
+description: >
+  Use when you want to patch a repository for security updates — read its open Dependabot
+  alerts, pick the lowest safe target version per package, bump it, verify, and open one PR
+  per package. Typically via a `patch-repo [owner/repo]` command. Triggers on security
+  patching, vulnerability alerts, CVE/GHSA follow-up or dependency bumps for security.
+disable-model-invocation: true
+argument-hint: "[owner/repo]"
+---
+
+# Patch Repo
+
+Patch één repository voor **security-updates**: alerts ophalen → doelversies bepalen → mij
+laten kiezen → per package bumpen, verifiëren en een PR openen.
+
+Dit is bewust **geen** algemene dependency-update. Je bumpt alleen wat nodig is om een
+advisory te dichten, en niets meer.
+
+## Welke repo
+
+De repo krijg je mee als argument (`owner/repo`). Ontbreekt hij, gebruik dan de repo waar we
+in staan:
+
+```bash
+gh repo view --json nameWithOwner -q .nameWithOwner
+```
+
+Is dat er ook niet, vraag er dan om — raad geen repo.
+
+## 1. Alerts ophalen
+
+```bash
+REPO="<owner/repo>"
+gh api "repos/$REPO/dependabot/alerts?state=open" --paginate \
+  --jq '.[] | "\(.security_advisory.severity)\t\(.security_vulnerability.package.ecosystem)\t\(.security_vulnerability.package.name)\t\(.security_vulnerability.vulnerable_version_range) -> \(.security_vulnerability.first_patched_version.identifier // "geen fix")\t\(.security_advisory.ghsa_id)"' \
+  | sort
+```
+
+- **403 of een lege lijst?** Dan heeft je token geen toegang tot Dependabot-alerts, of ze
+  staan uit voor deze repo. Meld dat en gok niet: `gh api repos/$REPO/dependabot/alerts` geeft
+  de echte fout terug.
+- **Geen GitHub-toegang, wel een Gemfile.lock?** Terugval op de lokale advisory-db. Zeg er
+  wel bij dat die iets kan achterlopen op GitHub:
+  ```bash
+  gem install bundler-audit && bundle-audit check --update
+  ```
+- Snel zelf kijken kan ook: `https://github.com/<owner>/<repo>/security/dependabot`.
+
+## 2. Doelversie per package bepalen
+
+Meerdere alerts kunnen hetzelfde package raken. Bepaal per package **één** doelversie:
+
+- Neem de **hoogste** `first_patched_version` over álle open alerts van dat package — een
+  lagere versie dicht niet elke advisory.
+- **Alerts zonder `first_patched_version` sla je over.** Daar bestaat nog geen fix voor; noem
+  ze apart in je overzicht zodat ik weet dat ze blijven staan.
+- Groepeer per ecosystem (`rubygems`, `npm`, …); de bump-commando's verschillen.
+
+Kruist die doelversie een **major**? Dan is het geen patch maar een upgrade: **stop en vraag
+het mij**. Een major-bump hoort een eigen story te zijn, niet de bijvangst van een security-run.
+
+## 3. Laat mij kiezen (harde gate)
+
+Zet de kandidaten in één compact overzicht — severity, package, van → naar, GHSA — en vraag
+wat je mag doen:
+
+- alles, of alleen `high` + `critical`?
+- of één specifiek package?
+
+**Begin niet met bumpen voordat ik geantwoord heb.** Is er niets te doen, zeg dat in één regel
+en stop.
+
+Check daarna eerst of het werk al loopt — meerdere repo's draaien een wekelijkse
+`auto-fix-vulnerabilities`-workflow die dezelfde branchnaam gebruikt:
+
+```bash
+gh pr list --repo "$REPO" --state open --limit 200 --json headRefName -q '.[].headRefName' \
+  | grep '^security/auto-fix-' || true
+```
+
+Staat er al een PR voor dat package en die doelversie? Sla het over en meld het.
+
+## 4. Per package: bumpen
+
+Eén package per branch, één PR per package. Houd de branchnaam gelijk aan die van de
+auto-fix-workflow, dan slaat die workflow jouw package over in plaats van er een tweede PR
+naast te zetten:
+
+```bash
+git switch main && git pull --ff-only
+git switch -c "security/auto-fix-<package>-<doelversie>"
+```
+
+**Ruby (`rubygems`)** — conservatief, zodat alleen dit gem beweegt:
+
+```bash
+bundle update <package> --conservative
+git diff --stat Gemfile.lock
+grep -E "^    <package> \(" Gemfile.lock            # check: is de doelversie gehaald?
+```
+
+**JavaScript (`npm`)**:
+
+```bash
+npm update <package>          # of: npm audit fix   (zonder --force)
+git diff --stat package-lock.json
+```
+
+Regels bij het bumpen:
+
+- Haalt de conservatieve bump de doelversie **niet** (een andere dependency pint het gem
+  vast)? **Ga niet zelf lopen forceren** met `--force`, `bundle update` zonder gem, of een
+  handmatige `Gemfile`-pin. Meld wat het blokkeert en vraag hoe ik het wil.
+- Beweegt er meer in de lockfile dan dit ene package? Noem dat expliciet in de PR-body — dat
+  is precies wat een reviewer wil weten.
+- Raak `Gemfile`/`package.json` alleen aan als het echt moet (een versie-pin die de fix
+  blokkeert), en zeg het er dan bij.
+
+## 5. Verifiëren
+
+Draai de checks van de repo voordat je een PR opent — een lockfile-wijziging is geen
+"veilige" wijziging:
+
+- de testsuite (of minimaal de suite die deze dependency raakt)
+- de linter, als die in deze repo bij CI hoort
+
+Falen ze? Herstel of, als het niet lukt, open de PR **wel** maar zet in de body expliciet
+dat de suite rood is en wat er faalt. Verzwijg dat nooit.
+
+## 6. PR openen
+
+Volg de conventie die de auto-fix-workflow ook gebruikt:
+
+```bash
+git add -A
+git commit -m "Security: bump <package> to <doelversie> (<severity>)"
+git push -u origin HEAD
+gh pr create --repo "$REPO" \
+  --title "Security: bump <package> to <doelversie> (<severity>)" \
+  --label security --label dependencies \
+  --body "<zie hieronder>"
+```
+
+PR-body, kort:
+
+```markdown
+## Security fix: `<package>` → <doelversie>
+
+**Advisory:** [<GHSA>](<url>) — severity **<severity>**
+<samenvatting uit de advisory, één regel>
+
+**Tests:** <groen / rood + wat faalt>
+
+### Changes
+<uitvoer van git diff --stat>
+```
+
+- **Geen** `Co-authored-by`-trailer of AI-attributie in de commit — commit op mijn naam.
+- Meerdere packages? Herhaal stap 4 t/m 6 per package, telkens vanaf een verse `main`.
+
+## 7. Afronden
+
+Rapporteer in één blok: welke packages gepatcht zijn (van → naar) met PR-link, welke alerts
+zijn blijven staan en waarom (geen fix beschikbaar, major nodig, al een open PR), en de
+teststatus per PR.
