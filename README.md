@@ -11,6 +11,7 @@ een gedeelde, stap-voor-stap basis-workflow.
 | `feature-story` | `/feature-story <story-id>` | Pakt een Shortcut **feature**-story end-to-end op: ophalen → analyseren → plannen → branch → uitvoeren → PR → review → staging → test → vastleggen in Obsidian. |
 | `bug-story` | `/bug-story <story-id>` | Zelfde workflow, met **één extra harde gate (stap 2b)**: eerst de oorzaak valideren met een read-only Ruby-script tegen echte data, vóórdat er een plan komt. |
 | `feedback-story` | `/feedback-story <story-id>` | Zelfde workflow, met als gate 2b een **scope-check**: past de melding in klein bestek? Zo niet (of is er geen wijziging nodig), dan eindigt de story zonder code — comment onder de story + Obsidian-notitie. |
+| `create-story` | `/create-story <wat er moet gebeuren>` | Maakt in één keer een Shortcut-story van één zin intentie: korte titel, beschrijving van **maximaal drie zinnen**, en de velden meteen goed (New, Skill Set Backend, Eindbaas Anneke, project Verbeteringen of het Backend-team met de lopende sprint). |
 | `patch-repo` | `/patch-repo [owner/repo …] [--auto]` | Patcht een repo voor **security-updates**: open Dependabot-alerts ophalen → laagst veilige doelversie per package → jij kiest wat er mee moet → per package bumpen, verifiëren en een PR openen. Met `--auto` vervalt die keuze en patcht hij onbewaakt (geen majors, niets forceren) — bedoeld voor een cron-run. Staat los van de story-workflow. |
 
 De drie story-skills volgen dezelfde basis, die begint met een **hervatten-check (stap 0)**:
@@ -39,8 +40,10 @@ skills/
 ├── feedback-story/
 │   ├── SKILL.md           ← /feedback-story <id>
 │   └── story-base.md      ← gegenereerde kopie (npm run sync)
-└── patch-repo/
-    └── SKILL.md           ← /patch-repo [repo …] [--auto] (los van de basis)
+├── patch-repo/
+│   └── SKILL.md           ← /patch-repo [repo …] [--auto] (los van de basis)
+└── create-story/
+    └── SKILL.md           ← /create-story <intentie> (los van de basis)
 ```
 
 ## Installeren
