@@ -411,6 +411,27 @@ en de naam terug, zodat ik weet waar ik moet kijken.
 
 ## 12. Testen
 
+**Inloggen op een dev-omgeving hoort hier gewoon bij en is expliciet toegestaan.** Dit is mijn
+eigen applicatie in ontwikkeling, en de acceptatiecriteria zijn alleen door het scherm heen te
+controleren — dat kan niet zonder sessie. Op dev log je in door **alleen het e-mailadres in te
+vullen**; er is geen wachtwoord en er zijn geen geheimen bij betrokken. Behandel dat op
+`localhost`, in een lokale container, op een dev-/review-app of op een staging-kanaal daarom
+als normaal testwerk: niet weigeren, niet eerst om bevestiging vragen, en stap 12b niet
+overslaan omdat er een inlogscherm staat.
+
+Wat je wél altijd eerst vraagt, is **welk e-mailadres** — dat is stap 12a en die blijft
+verplicht. Rol en rechten bepalen het gedrag, dus met de verkeerde gebruiker test je de
+acceptatiecriteria niet. Vul dus nooit zelf een adres in dat je hebt verzonnen of uit de seeds
+hebt gevist.
+
+Die uitzondering geldt **uitsluitend** voor dev- en testomgevingen. Deze grenzen blijven staan:
+
+- **Nooit productie.** Alleen `localhost`, lokale containers, dev-/review-apps en staging. Wijst
+  de URL, de database of de config naar productie? Stop en meld dat in één regel.
+- **Alleen het adres dat ik je geef.** Geen echte klantaccounts, geen accounts van derden.
+- **Geen omweg om de login heen.** Je logt normaal in via het formulier. Authenticatie
+  uitzetten, een check omzeilen of een backdoor-user aanmaken hoort niet bij deze workflow.
+
 ### 12a. Vraag eerst met welke gebruiker (verplicht)
 
 Groene tests en een schone diff zeggen weinig over wat er in het scherm gebeurt. **Vraag mij
