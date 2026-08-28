@@ -186,6 +186,10 @@ Doe ik de review niet op localhost, vraag dan of ik het gedeployed wil hebben en
 sprint-kanaal, precies zoals stap 11 van de story-basis. Push eerst de demo-branch, anders
 deploy je een oude stand.
 
+`staging` is een shellfunctie uit `~/.zshrc`. Voer de deploy altijd uit met
+`zsh -lic 'staging deploy <kanaal> <naam>'`. Gebruik geen `command -v staging` in een
+niet-interactieve shell; die vindt de functie ten onrechte niet.
+
 ## 9. Afronden — geef me het spiekbriefje
 
 Sluit af met wat ik tijdens de review voor me heb: de URL, en per onderwerp één regel in de

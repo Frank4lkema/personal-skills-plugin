@@ -380,9 +380,14 @@ zijn gedeeld, dus je zet er zo het werk van een collega mee overheen.
 Het commando is altijd hetzelfde:
 
 ```bash
-staging deploy <kanaal> <naam>
-# voorbeeld: staging deploy sprint11 master
+zsh -lic 'staging deploy <kanaal> <naam>'
+# voorbeeld: zsh -lic 'staging deploy sprint11 master'
 ```
+
+`staging` is een shellfunctie uit `~/.zshrc`. Voer hem in coding-agentomgevingen daarom altijd
+uit via `zsh -lic`. Controleer niet eerst met `command -v staging` in een niet-interactieve
+shell; die controle vindt de functie ten onrechte niet. Meld het commando pas als ontbrekend
+wanneer `zsh -lic 'type staging'` ook faalt.
 
 - **`<kanaal>`** = de sprint waar we nu in zitten, als één woord: `sprint<nummer>`. Leid dat
   af uit de iteration/sprint van story `<STORY_ID>` die je in stap 1 hebt opgehaald. Noem het
