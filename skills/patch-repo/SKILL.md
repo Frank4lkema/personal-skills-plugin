@@ -111,15 +111,31 @@ Eén package per branch, één PR per package. Houd de branchnaam gelijk aan die
 auto-fix-workflow, dan slaat die workflow jouw package over in plaats van er een tweede PR
 naast te zetten:
 
+Is de repo ingericht voor **worktrees** (`wg` beschikbaar én een `.config/setup.sh` in de
+primaire checkout), gebruik die dan. Je krijgt een verse checkout vanaf de default branch,
+dus je kunt nooit in mijn werk zitten:
+
 ```bash
 BASE=$(gh repo view "$REPO" --json defaultBranchRef -q .defaultBranchRef.name)   # master of main
-git switch "$BASE" && git pull --ff-only
-git switch -c "security/auto-fix-<package>-<doelversie>"
+BRANCH="security/auto-fix-<package>-<doelversie>"
+PRIMARY="$(git worktree list --porcelain | sed -n '1s/^worktree //p')"
+if command -v wg >/dev/null 2>&1 && [ -f "$PRIMARY/.config/setup.sh" ]; then
+  wg new "$BRANCH" "$BASE"
+  wg path "$BRANCH"
+else
+  git switch "$BASE" && git pull --ff-only
+  git switch -c "$BRANCH"
+fi
 ```
 
-**Ga nooit uit van `main`** — meerdere repo's draaien op `master`. En werk nooit in een
-checkout waar ik zelf in zit: staat er ongecommit werk of sta je op een feature-branch, dan
-stop je en zeg je dat. Bij een onbewaakte run gebruik je een eigen, aparte kloon.
+Ging het via `wg`? Draai de rest van het bumpen en testen in het pad dat `wg path` teruggaf.
+Ruim de worktree na het openen van de PR op met `wg remove -D "$BRANCH"` (de `-D` is nodig
+omdat gekopieerde bestanden als `node_modules` als untracked tellen).
+
+**Ga nooit uit van `main`** — meerdere repo's draaien op `master`. Val je terug op de
+`git switch`-variant, werk dan nooit in een checkout waar ik zelf in zit: staat er
+ongecommit werk of sta je op een feature-branch, dan stop je en zeg je dat. Bij een
+onbewaakte run gebruik je een eigen, aparte kloon.
 
 **Ruby (`rubygems`)** — conservatief, zodat alleen dit gem beweegt:
 

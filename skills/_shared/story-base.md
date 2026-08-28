@@ -171,10 +171,25 @@ Gebruik de branch-naam die Shortcut aanlevert in de storydata uit stap 1 (meesta
 `formatted_vcs_branch_name`). Is dat veld er niet, bouw dan zelf een naam van de vorm
 `sc-<STORY_ID>/<korte-slug>`. **Geen browser** om dit op te zoeken.
 
+Is de repo ingericht voor **worktrees** (`wg` beschikbaar én een `.config/setup.sh` in de
+primaire checkout), maak de branch dan in een eigen worktree. Die krijgt zijn eigen poort,
+zodat de story naast ander werk kan draaien zonder de hoofdcheckout te raken. Zo niet, dan
+gewoon een branch in de huidige checkout:
+
 ```bash
 # BRANCH bevat de story-id; hij MOET sc-<STORY_ID> bevatten
-git switch -c "$BRANCH" 2>/dev/null || git switch "$BRANCH"
+PRIMARY="$(git worktree list --porcelain | sed -n '1s/^worktree //p')"
+if command -v wg >/dev/null 2>&1 && [ -f "$PRIMARY/.config/setup.sh" ]; then
+  wg new "$BRANCH"
+  wg path "$BRANCH"
+else
+  git switch -c "$BRANCH" 2>/dev/null || git switch "$BRANCH"
+fi
 ```
+
+Ging het via `wg`? Draai **alle** vervolgstappen in het pad dat `wg path` teruggaf, niet in
+de primaire checkout. Meld dat pad en de poort (`wg env "$BRANCH"` toont `WG_PORT`) in je
+samenvatting, zodat ik weet waar de story draait.
 
 Harde eis: de branch-naam bevat `sc-<STORY_ID>`. Controleer dit; ontbreekt het, stop dan
 en vraag mij om de juiste naam — anders linkt Shortcut de branch niet.
@@ -517,6 +532,7 @@ Notitie-inhoud (template):
 - **Type:** <feature | bug | feedback>
 - **Uitkomst:** <geïmplementeerd | geen wijziging — reden>
 - **Branch:** <branch-naam of n.v.t.>
+- **Worktree:** <pad + poort, of n.v.t. als het in de hoofdcheckout ging>
 - **PR:** <pr-link of n.v.t.>
 - **Staging:** <kanaal + naam, bv. `sprint11 master` — of niet gedeployed>
 
@@ -542,7 +558,8 @@ scope-check — feature: n.v.t.>
 
 ## Afronden
 
-Rapporteer beknopt: branch-naam, wat is gebouwd/gefixt, PR-link, Greptile-status, eventuele
+Rapporteer beknopt: branch-naam (en het worktree-pad + de poort als je er een hebt
+aangemaakt), wat is gebouwd/gefixt, PR-link, Greptile-status, eventuele
 PO-actie onder de story, het staging-kanaal + de naam (of dat er niet gedeployed is), de
 testuitkomst (met welke gebruiker getest, en wat je niet hebt kunnen testen), en het pad van
 de aangemaakte Obsidian-notitie. Noem de story pas klaar als
