@@ -13,7 +13,7 @@ argument-hint: "[story-id]"
 
 End-to-end workflow voor één Shortcut **bug**-story. Gelijk aan de gedeelde basis,
 met **één extra stap (2b)**: eerst de oorzaak valideren met echte data via een
-read-only Ruby-script, vóórdat er een plan wordt gemaakt.
+read-only Ruby-script — dat je wegschrijft in `script/` — vóórdat er een plan wordt gemaakt.
 
 ## Story-id
 
@@ -48,7 +48,8 @@ Volgorde voor een bug-story:
 12. Naar staging? → vragen of het gedeployed moet, op welk sprint-kanaal en onder welke naam
 13. Testen — eerst vragen met welke gebruiker, daarna mij om een UI-check vragen
 14. Vastleggen in Obsidian (type: bug) — plak de validatie-output in de
-    "Validatie / scope-check"-sectie als bewijs, en zet `Uitkomst: geïmplementeerd`.
+    "Validatie / scope-check"-sectie als bewijs, met het pad van het validatiescript erbij,
+    en zet `Uitkomst: geïmplementeerd`.
 
 ---
 
@@ -58,17 +59,30 @@ Doel: **zeker weten dat we de goede oorzaak te pakken hebben** vóórdat we een 
 
 1. Formuleer op basis van stap 2 een concrete **hypothese** over de oorzaak
    (bv. "records X hebben veld Y leeg waardoor Z faalt").
-2. Schrijf een **Ruby-class die alleen leest** en de hypothese toetst tegen echte data.
-   Harde regels voor dit script:
+2. Schrijf een **Ruby-class die alleen leest** en de hypothese toetst tegen echte data, en
+   **schrijf die direct weg als bestand** — niet alleen als codeblok in de chat, want dan is
+   het weg zodra de sessie eindigt en kan ik het niet zelf nog eens draaien.
+   - **Pad:** `script/sc-<STORY_ID>-validatie.rb`. Heeft de repo al een eigen map voor losse
+     scripts (`scripts/`, `lib/tasks/oneoffs`, …)? Gebruik die en houd je aan de naamgeving
+     die er al staat. Is er niets? Maak `script/` aan.
    - **Uitsluitend lezen.** Alleen queries/reads + `puts`. **Nooit** schrijven, updaten,
      verwijderen, aanmaken of jobs enqueuen. Geen `save`, `update`, `destroy`, `create`,
-     `delete`, `insert`, `perform`. Zo is het veilig om op productie te plakken.
-   - **Zelfstandig plakbaar.** Eén blok dat de gebruiker in een Rails console / op de
-     server kan plakken en meteen kan draaien (bv. `class BugValidation ... end;
-     BugValidation.new.run`). Print duidelijke, samenvattende output (aantallen,
-     voorbeelden, wat de hypothese bevestigt of ontkracht).
-   - Geef het script in één codeblok zodat de gebruiker het makkelijk kopieert.
-3. Vraag de gebruiker het script op de server te draaien en **de output terug te plakken**.
+     `delete`, `insert`, `perform`. Zo is het veilig om op productie te draaien.
+   - **Op twee manieren bruikbaar:** draaibaar als bestand (`bin/rails runner
+     script/sc-<STORY_ID>-validatie.rb`) én in zijn geheel plakbaar in een Rails console. Dus
+     één zelfstandig blok dat zichzelf aanroept (bv. `class BugValidation ... end;
+     BugValidation.new.run`), zonder afhankelijkheden buiten de app.
+   - Print duidelijke, samenvattende output: aantallen, een paar voorbeeldrecords, en in
+     gewone taal wat de hypothese bevestigt of ontkracht.
+   - **Geen inline comments** in het script (zie de huisstijlregel in de basis) — laat de
+     methodenamen en de `puts`-teksten het werk doen.
+   - Moet de hypothese worden herzien? **Werk hetzelfde bestand bij**, geen `-v2` ernaast.
+   - Het script hoort **niet in de PR-diff** tenzij ik er zelf om vraag: laat het untracked
+     staan en `git add` het niet mee bij de fix. Het bewijs dat telt is de output, en die
+     landt in Obsidian (stap 14).
+3. Vraag de gebruiker het script te draaien en **de output terug te plakken**. Geef daarbij
+   allebei de opties, zodat ik kan kiezen: het pad plus het `bin/rails runner`-commando, en
+   het script in één codeblok om in de console op de server te plakken.
 4. Beoordeel de output: **bevestigt** die de hypothese?
    - **Ja** → ga door naar het plan (basis-stap 3), en bewaar de output voor het
      Obsidian-logboek.
