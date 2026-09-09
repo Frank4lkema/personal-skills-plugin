@@ -38,7 +38,7 @@ Feature-story = de gedeelde basis zoals hij is:
 6. Self-review via **Plannotator Review**
 7. Pull request maken
 8. Wachten op Greptile
-9. Greptile-comments verwerken
+9. Greptile-comments samen beoordelen en pas na mijn expliciete akkoord verwerken
 10. Nieuwe route? → PO-rechten onder de story
 11. Naar staging? → vragen of het gedeployed moet, op welk sprint-kanaal en onder welke naam
 12. Testen — eerst vragen met welke gebruiker, daarna mij om een UI-check vragen

@@ -42,6 +42,21 @@ in het bestand.
 - **Bestaande comments laat je staan.** Ruim ze niet op als bijvangst van deze story; dat
   maakt de diff groter dan de wijziging.
 
+**Alle tests zijn te allen tijde in het Engels.** Schrijf nieuwe en gewijzigde tests
+volledig in het Engels: onder andere bestandsnamen, `describe`/`context`/`it`-teksten,
+testnamen, helpernamen, variabelen en testdata die je zelf bedenkt. Niet-Engelse letterlijke
+applicatietekst mag alleen in een assertion of fixture staan als juist die tekst onderdeel is
+van het te testen gedrag. Vertaal geen onaangeraakte bestaande tests als bijvangst, maar laat
+in een test die je wél wijzigt geen zelfgeschreven Nederlandse testtekst achter.
+
+**Voeg geen onnodige error handling toe.** Handel alleen fouten af die aantoonbaar verwacht
+en herstelbaar zijn én waarvoor de story of een bestaand contract specifiek gedrag vereist.
+Voeg dus geen speculatieve guards, brede `rescue`/`catch`, stil ingeslikte exceptions,
+fallbackwaarden, retries of "log and continue" toe voor theoretische situaties. Laat
+onverwachte fouten zichtbaar falen en vertrouw op bestaande framework- en applicatiegrenzen.
+Bestaande defensieve code ruim je niet op als bijvangst; moet je die voor deze wijziging
+uitbreiden, onderbouw dan in het plan welk concreet foutscenario wordt afgehandeld.
+
 ---
 
 ## 0. Hervatten? — eerst kijken of er al werk ligt
@@ -67,7 +82,7 @@ Bepaal op basis van wat je vindt waar je verder gaat:
 | Alleen een plan-bestand | Stap 3 — plan afmaken en laten annoteren |
 | Branch, geen PR | Stap 5 — uitvoeren; kijk eerst met `git log` en `git diff main...HEAD` wat er al staat |
 | Open PR, nog geen Greptile-reactie | Stap 8 — wachten op review |
-| Open PR mét Greptile-comments | Stap 9 — comments verwerken |
+| Open PR mét Greptile-comments | Stap 9 — comments samen beoordelen |
 | PR gemerged of gesloten | Stap 10–13 — route/PO-check, staging, test, Obsidian |
 
 **Harde regels bij hervatten:**
@@ -246,8 +261,12 @@ plannotator review
 Verwerk de teruggekomen feedback (of leg kort uit waarom je iets niet overneemt). Draai na
 wijzigingen de relevante checks opnieuw voordat je de PR opent.
 
-Loop hierbij zelf ook nog even de diff na op **inline comments** die je hebt toegevoegd, en
-haal ze weg (op de functionele uitzonderingen bovenaan na):
+Loop hierbij zelf ook nog even de diff na op de harde code-afspraken bovenaan:
+
+- haal toegevoegde **inline comments** weg (op de functionele uitzonderingen na);
+- controleer dat alle nieuwe en gewijzigde tests volledig in het Engels zijn;
+- controleer iedere toegevoegde guard, `rescue`/`catch`, fallback en retry en verwijder die
+  tenzij er een concreet verwacht foutscenario en vereist herstelgedrag voor bestaat.
 
 ```bash
 git diff main...HEAD | grep -nE '^\+\s*(#|//|/\*|<!--)'
@@ -281,9 +300,11 @@ gh pr create --title "<type>: <korte omschrijving> [sc-<STORY_ID>]" \
 
 Reviewbots reageren asynchroon. Kies één aanpak op basis van je harness:
 
-**Optie A (indien beschikbaar, hands-off):** heb je een ingebouwde watcher (bv. `/autofix-pr`
-in Claude Code)? Vertel mij dat ik die op deze branch kan draaien; die bewaakt de PR en pusht
-fixes zodra CI faalt of een reviewer comment plaatst. Ga daarna door naar stap 10.
+**Optie A (indien beschikbaar):** gebruik een ingebouwde watcher alleen om te signaleren dat
+Greptile heeft gereageerd en de comments op te halen. Gebruik geen automatische fixmodus:
+een watcher mag naar aanleiding van reviewcomments niets wijzigen, committen, pushen of
+beantwoorden. Een commando zoals `/autofix-pr` is daarom alleen geschikt als autofixes
+expliciet uitgeschakeld kunnen worden.
 
 **Optie B (pollen):** wacht tot Greptile comments heeft geplaatst en meld het expliciet als
 de timeout verloopt zonder reactie (behandel dat niet als "review afgerond").
@@ -303,11 +324,30 @@ done
 > Vervang de `greptile`-filter door de exacte bot-naam die in jullie repo comment, of
 > poll Greptile's eigen API/webhook i.p.v. `gh`.
 
-## 9. Comments verwerken (conditioneel)
+## 9. Comments samen beoordelen (harde goedkeuringsgate)
 
-- **Greptile heeft gereageerd?** Lees de comments/reviews, beoordeel elk voorstel tegen de
-  code, verwerk de terechte fixes en push. Bij twijfel: leg kort uit waarom je iets niet
-  overneemt. Draai na fixes de relevante checks opnieuw.
+Greptile-comments zijn voorstellen, geen toestemming om de al goedgekeurde implementatie te
+wijzigen. Zodra Greptile heeft gereageerd:
+
+1. Haal **alle** comments en reviews op, maar wijzig nog niets.
+2. Controleer ieder voorstel tegen de huidige code, de story en vooral het door mij
+   goedgekeurde plan.
+3. Geef mij een genummerd overzicht met per comment:
+   - een korte samenvatting en de vindplaats;
+   - jouw oordeel: **overnemen**, **niet overnemen** of **bespreken**;
+   - wat er concreet aan code of tests zou veranderen;
+   - expliciet of dat afwijkt van het goedgekeurde plan of eerder goedgekeurde code.
+4. Bespreek de opties met mij en wacht op mijn expliciete keuze. **Tot die keuze mag je geen
+   code aanpassen, commits maken, pushen of GitHub-reacties plaatsen.** Stilte of een eerder
+   planakkoord is geen goedkeuring van Greptile-voorstellen.
+5. Verwerk daarna alleen de comments waarvoor ik akkoord heb gegeven. Draai de relevante
+   checks opnieuw, toon kort de uiteindelijke diff ten opzichte van de eerder goedgekeurde
+   implementatie, en push en reageer pas daarna zoals hieronder beschreven.
+
+Wijst een comment op een echt probleem maar zou de oplossing het goedgekeurde plan merkbaar
+veranderen, leg dan eerst alternatieven voor in plaats van Greptiles oplossing automatisch
+te volgen.
+
 - **Timeout of geen comments?** Meld dit expliciet en doe niet alsof de review afgerond is;
   vraag of je langer moet wachten of later moet terugkomen.
 
@@ -546,7 +586,7 @@ Notitie-inhoud (template):
 scope-check — feature: n.v.t.>
 
 ## Greptile
-<verwerkt: welke fixes / geen comments / timeout>
+<besproken besluit per comment + welke goedgekeurde fixes zijn verwerkt / geen comments / timeout>
 
 ## PO-actie
 <ja: welke route + rechten / nee>

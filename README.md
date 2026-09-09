@@ -11,6 +11,7 @@ een gedeelde, stap-voor-stap basis-workflow.
 | `feature-story` | `/feature-story <story-id>` | Pakt een Shortcut **feature**-story end-to-end op: ophalen → analyseren → plannen → branch → uitvoeren → PR → review → staging → test → vastleggen in Obsidian. |
 | `bug-story` | `/bug-story <story-id>` | Zelfde workflow, met **één extra harde gate (stap 2b)**: eerst de oorzaak valideren met een read-only Ruby-script tegen echte data, vóórdat er een plan komt. Dat script wordt weggeschreven als bestand in `script/`, zodat je het zelf opnieuw kunt draaien. |
 | `feedback-story` | `/feedback-story <story-id>` | Zelfde workflow, met als gate 2b een **scope-check**: past de melding in klein bestek? Zo niet (of is er geen wijziging nodig), dan eindigt de story zonder code — comment onder de story + Obsidian-notitie. |
+| `pull-request-feedback` | `/pull-request-feedback <story-id>` | Vindt zelf de PR bij een Shortcut-story en loopt alle reviewfeedback **één comment tegelijk** samen door. Geen codewijziging zonder besluit en nooit een GitHub-reactie, push of resolve zonder aparte expliciete toestemming. |
 | `create-story` | `/create-story <wat er moet gebeuren>` | Maakt in één keer een Shortcut-story van één zin intentie: korte titel, beschrijving van **maximaal drie zinnen**, en de velden meteen goed (New, Skill Set Backend, Eindbaas Anneke, project Verbeteringen of het Backend-team met de lopende sprint). |
 | `uitleg` | `/uitleg <onderwerp>` | Zoekt uit hoe iets in de codebase écht werkt — deze repo **plus de zusterrepo's één map hoger**, inclusief git-historie voor het *waarom* — en legt het in gewone taal uit in een blijvende notitie onder `Codebase/` in Obsidian. Read-only: wijzigt geen code. Staat los van de story-workflow. |
 | `create-demo` | `/create-demo <sprint> <gebruiker>` | Bouwt de **sprint review-demo**: haalt de afgeronde stories van die persoon uit de sprint, houdt over wat écht in deze repo landde, clustert dat tot een paar herkenbare onderwerpen en bouwt na jouw akkoord één demopagina (route + controller op een wegwerp-branch `demo/sprint<NN>`) met alle schermen in iframes — geen geklik tijdens de review. |
@@ -42,6 +43,8 @@ skills/
 ├── feedback-story/
 │   ├── SKILL.md           ← /feedback-story <id>
 │   └── story-base.md      ← gegenereerde kopie (npm run sync)
+├── pull-request-feedback/
+│   └── SKILL.md           ← /pull-request-feedback <id> (los van de basis)
 ├── patch-repo/
 │   └── SKILL.md           ← /patch-repo [repo …] [--auto] (los van de basis)
 ├── create-story/
@@ -63,8 +66,8 @@ De repo is tegelijk een **plugin-marketplace**. Voeg hem toe en installeer de pl
 /plugin install story-skills@personal-skills-plugin
 ```
 
-Herstart daarna Claude Code (of `/plugin` → reload). De commands `/feature-story` en
-`/bug-story` zijn dan beschikbaar.
+Herstart daarna Claude Code (of `/plugin` → reload). De commands `/feature-story`,
+`/bug-story` en `/pull-request-feedback` zijn dan beschikbaar.
 
 > **Alternatief** — de skills zijn self-contained, dus `npx skills` (zie de
 > Cursor-sectie hieronder) werkt ook voor Claude Code, of kopieer handmatig:
@@ -157,7 +160,7 @@ niet volledig:
   ze worden overschreven.
 - **Eén skill apart** → pas de betreffende `SKILL.md` aan. De bug-wrapper bevat de
   validatie-gate 2b, de feedback-wrapper de scope-check 2b plus de afslag zonder code.
-- **Nieuwe skill erbij** → maak `skills/<naam>/SKILL.md` en voeg `<naam>` toe aan de lijst in
-  `scripts/sync-shared.sh`, anders krijgt die map geen kopie van de basis.
+- **Nieuwe skill erbij** → maak `skills/<naam>/SKILL.md`. Voeg hem alleen toe aan de lijst in
+  `scripts/sync-shared.sh` als hij ook een gegenereerde kopie van de story-basis nodig heeft.
 
 Vervang overal `<STORY_ID>` mentaal door het meegegeven argument (`$ARGUMENTS`).

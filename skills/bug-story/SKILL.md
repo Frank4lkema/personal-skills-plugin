@@ -43,7 +43,7 @@ Volgorde voor een bug-story:
 7. Self-review via **Plannotator Review**
 8. Pull request maken
 9. Wachten op Greptile
-10. Greptile-comments verwerken
+10. Greptile-comments samen beoordelen en pas na mijn expliciete akkoord verwerken
 11. Nieuwe route? → PO-rechten onder de story
 12. Naar staging? → vragen of het gedeployed moet, op welk sprint-kanaal en onder welke naam
 13. Testen — eerst vragen met welke gebruiker, daarna mij om een UI-check vragen

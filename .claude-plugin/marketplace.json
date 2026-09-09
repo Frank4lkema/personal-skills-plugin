@@ -8,8 +8,8 @@
     {
       "name": "story-skills",
       "source": "./",
-      "description": "Persoonlijke workflow-skills: /feature-story, /bug-story en /feedback-story met een gedeelde, hervatbare basis-workflow, plus /patch-repo voor security-updates.",
-      "version": "1.17.0"
+      "description": "Persoonlijke workflow-skills voor Shortcut-stories, gezamenlijke PR-feedback en security-updates.",
+      "version": "1.19.0"
     }
   ]
 }
