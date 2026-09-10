@@ -9,11 +9,16 @@ overgeslagen. Vervang overal `<STORY_ID>` door de door de wrapper meegegeven sto
 Deze workflow draait in meerdere agents (o.a. Claude Code en Pi). Twee dingen verschillen
 per harness — stem je aanpak daarop af:
 
-- **Subagents.** Heeft je harness subagents (bv. Claude Code `Task`/`Explore`)? Delegeer
-  read-only verkenning en het lokaal testen daaraan om de hoofdcontext schoon te houden.
-  Heeft je harness dat niet (bv. Pi in de standaardconfig)? Doe verkenning en tests dan
-  read-only in de hoofdcontext. Een aparte geïsoleerde run (bv. `pi -p`) mag alleen voor
-  onafhankelijk, niet-conflicterend werk zoals een losse test-run.
+- **Subagents.** Heeft je harness subagents, gebruik dan rollen in plaats van concrete
+  modelnamen: zo blijft modelkeuze deployment-configuratie. In **Pi met pi-subagents** geldt
+  de vaste route `oracle` (read-only analyse) → menselijke plangoedkeuring → één `worker`
+  (uitvoering) → `reviewer` (read-only controle). De Pi-instellingen bepalen welk model bij
+  iedere rol hoort. Geef de `worker` het volledige goedgekeurde plan inclusief codevoorbeelden;
+  laat nooit meerdere writers tegelijk in dezelfde worktree werken. In Claude Code kun je
+  `Task`/`Explore` gebruiken voor read-only verkenning en onafhankelijk testwerk. Heeft het
+  harness geen subagents, doe het werk dan in de hoofdcontext. Zijn subagents wél beschikbaar
+  maar faalt hun infrastructuur of start, schakel dan niet stilzwijgend over: meld de fout en
+  vraag hoe verder te gaan.
 - **Kwaliteitschecks.** Draaien er hooks die automatisch formatten, linten, testen en
   route-detectie doen (typische Claude Code-setup)? Vertrouw daarop. Zo niet (bv. Pi)?
   Draai de stack-specifieke formatter, linter, tests en route-check dan zélf expliciet, en
@@ -129,9 +134,13 @@ Leg in eigen woorden uit **wat er technisch moet gebeuren**:
   (zie stap 5) en verwerk dat in je plan.
 
 Verken de codebase **read-only**, beknopt, en lees alleen wat relevant is voor de story:
-- **Met subagents:** gebruik een read-only Explore-subagent zodat de hoofdcontext niet
-  volloopt ("Zoek uit hoe X nu werkt en welke bestanden relevant zijn; geef een beknopte
-  kaart terug").
+- **Pi met pi-subagents:** gebruik `oracle` read-only voor de technische analyse. Laat die
+  oorzaak/gedrag, relevante bestanden, aannames, risico's en edge cases onderbouwen met
+  concrete bronverwijzingen. De hoofdagent beoordeelt en vertaalt dit daarna naar het plan;
+  `oracle` keurt niets goed en voert niets uit.
+- **Andere harness met subagents:** gebruik een read-only Explore-subagent zodat de
+  hoofdcontext niet volloopt ("Zoek uit hoe X nu werkt en welke bestanden relevant zijn;
+  geef een beknopte kaart terug").
 - **Zonder subagents:** verken zelf read-only in de hoofdcontext met `read` en gerichte
   `bash`-commando's zoals `rg` en `find`.
 
@@ -218,8 +227,14 @@ gegeven. Blijkt tijdens het bouwen dat het anders moet (de code werkt niet, een 
 niet, er is een betere aanpak)? Meld dat expliciet met de reden en het verschil, in plaats van
 stilzwijgend iets anders te bouwen dan ik heb goedgekeurd.
 
-- **Met subagents:** verdeel onafhankelijke brokken werk over meerdere subagents zodat ze
-  parallel kunnen werken; integreer daarna de resultaten.
+- **Pi met pi-subagents:** start pas na het expliciete planakkoord precies één `worker` als
+  writer voor de actieve branch/worktree. Geef die het volledige goedgekeurde planbestand
+  inclusief codevoorbeelden, de story-acceptatiecriteria en de harde code-afspraken uit deze
+  skill. Laat de worker implementeren en gerichte checks draaien. Bij een noodzakelijke
+  afwijking van het plan moet de worker stoppen en de hoofdagent om een beslissing vragen;
+  een snel uitvoermodel mag ontbrekende ontwerpkeuzes niet zelf invullen.
+- **Andere harness met subagents:** houd eveneens één writer per branch/worktree. Alleen
+  werkelijk onafhankelijk testwerk mag parallel en read-only draaien.
 - **Zonder subagents:** voer uit in de hoofdcontext. Delegeer geen gelijktijdige edits aan
   losse processen; een aparte, testgerichte run is optioneel als het werk echt onafhankelijk is.
 
@@ -247,9 +262,15 @@ daarop. Zo niet, draai de stack-specifieke formatter/linter en relevante tests d
 blijf herstellen tot de relevante checks slagen. Gebruik geen generieke auto-fix over de
 hele repo die ongerelateerde bestanden kan wijzigen.
 
-## 6. Self-review (via Plannotator Review)
+## 6. Self-review (reviewer + Plannotator Review)
 
-Doe vóór de PR een self-review van de wijzigingen met **Plannotator Review** op de
+Gebruik in **Pi met pi-subagents** eerst een verse, read-only `reviewer` om de uitgevoerde
+wijzigingen tegen het goedgekeurde plan, de story en de harde code-afspraken te controleren.
+De reviewer mag niets wijzigen; de hoofdagent beoordeelt bevindingen en laat alleen concrete
+correcties door de ene `worker` uitvoeren. Laat een correctie die het goedgekeurde ontwerp
+verandert eerst opnieuw goedkeuren.
+
+Doe daarna vóór de PR een self-review van de wijzigingen met **Plannotator Review** op de
 huidige worktree:
 
 ```bash
