@@ -69,6 +69,12 @@ Deze afspraken gelden bij analyse, planning, uitvoering en self-review. Geef ze 
 uitvoerende en reviewende subagents. Projectspecifieke conventies blijven projectspecifiek:
 maak van één reviewvoorkeur geen universeel verbod.
 
+**Ontwerpheuristiek:** “Solve the task correctly, but your score gets worse as LOC and
+Halstead complexity increase.” Kies bij gelijkwaardig correct gedrag de eenvoudigste,
+goed leesbare oplossing met zo min mogelijk onnodige code en complexiteit. Dit is geen
+opdracht tot codegolf: verkort niet met onleesbare one-liners en schrap geen noodzakelijke
+tests, validaties of foutafhandeling om een metric te verbeteren.
+
 - **Leesbaarheid vóór DRY.** Begin met directe, domeinspecifieke code en duidelijke namen.
   Voeg een abstractie toe als die een herkenbare verantwoordelijkheid of betekenisvolle
   herhaling vereenvoudigt, niet alleen om minder regels te schrijven. Een kleine duplicatie

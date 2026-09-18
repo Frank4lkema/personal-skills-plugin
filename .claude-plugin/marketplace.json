@@ -9,7 +9,7 @@
       "name": "story-skills",
       "source": "./",
       "description": "Persoonlijke workflow-skills voor Shortcut-stories, gezamenlijke PR-feedback en security-updates.",
-      "version": "1.20.0"
+      "version": "1.20.1"
     }
   ]
 }
