@@ -1,6 +1,6 @@
 # Story-workflow — gedeelde basis
 
-Dit is de gedeelde spine voor `feature-story` en `bug-story`. Een wrapper-skill leest
+Dit is de gedeelde basis voor `feature-story`, `bug-story` en `feedback-story`. Een wrapper-skill leest
 dit bestand, geeft de **story-id** mee en geeft aan welke stappen worden ingevoegd of
 overgeslagen. Vervang overal `<STORY_ID>` door de door de wrapper meegegeven story-id.
 
@@ -59,6 +59,44 @@ fallbackwaarden, retries of "log and continue" toe voor theoretische situaties. 
 onverwachte fouten zichtbaar falen en vertrouw op bestaande framework- en applicatiegrenzen.
 Bestaande defensieve code ruim je niet op als bijvangst; moet je die voor deze wijziging
 uitbreiden, onderbouw dan in het plan welk concreet foutscenario wordt afgehandeld.
+Gebruik bestaande defaults tenzij het contract een afwijking vereist. Zorg bij verwachte
+operationele fouten voor passende signalering en retries volgens de applicatieconventies;
+vereenvoudigen is geen reden om noodzakelijke foutafhandeling of beveiliging weg te halen.
+
+### Ontwerp- en testafspraken uit collegiale reviews
+
+Deze afspraken gelden bij analyse, planning, uitvoering en self-review. Geef ze ook mee aan
+uitvoerende en reviewende subagents. Projectspecifieke conventies blijven projectspecifiek:
+maak van één reviewvoorkeur geen universeel verbod.
+
+- **Leesbaarheid vóór DRY.** Begin met directe, domeinspecifieke code en duidelijke namen.
+  Voeg een abstractie toe als die een herkenbare verantwoordelijkheid of betekenisvolle
+  herhaling vereenvoudigt, niet alleen om minder regels te schrijven. Een kleine duplicatie
+  is beter dan een generieke constructie die de bedoeling verbergt. Gebruik guards voor
+  uitzonderingen; schrijf normale alternatieve paden als duidelijke `if/else`-takken in
+  plaats van geneste ternaries of slimme booleanvergelijkingen.
+- **Onderzoek eerst het bestaande contract.** Lees een recente vergelijkbare implementatie
+  en de relevante callers voordat je een ontwerp kiest. Controleer domeintermen, predicates,
+  parameter- en returntypen, scopes en ondersteunde toestanden zoals gearchiveerde records.
+  Hergebruik passende patronen, maar kopieer geen bekende legacy-afwijking alleen voor
+  consistentie. Bij twijfel: benoem de afwijking en bespreek die in het plan.
+- **Begrijp de oorzaak en domeinbetekenis.** Vertaal acceptatiecriteria naar concrete gevallen;
+  onderscheid bijvoorbeeld huidige van nieuwe gegevens en actieve van alle records.
+  Reproduceer bij een bug het falende scenario en volg de betrokken toestandsovergangen
+  voordat je een guard of workaround toevoegt. Controleer suggesties van AI, reviewers en
+  linters tegen het werkelijke gedrag; een toolvoorstel is geen inhoudelijke onderbouwing.
+- **Houd verantwoordelijkheden gescheiden.** Jobs orchestreren: haal benodigde gegevens op
+  en geef ze door aan services met een afgebakende domeintaak. Geef objecten of andere
+  afhankelijkheden expliciet mee waar dat past; IDs op een async-grens verplichten interne
+  services niet om ook IDs te ontvangen. Stop geen businessbeslissingen in transportwrappers
+  of views en laat een service niet onnodig zelf clients of verborgen afhankelijkheden bouwen.
+- **Test betekenisvol gedrag op het passende niveau.** Benoem voor iedere nieuwe test welke
+  concrete regressie of welk contract hij beschermt. Test businessregels bij hun eigenaar
+  en kies het goedkoopste testniveau dat het relevante gedrag daadwerkelijk bewijst. Gebruik
+  bij bugfixes het oorspronkelijke foutscenario, inclusief relevante eventvolgorde. Voeg niet
+  automatisch brede request specs toe voor statische markup, CSS-klassen, losse links of
+  reeds afgedekt gedrag; doe dat alleen als het de relevante regressie beschermt en bij de
+  projectafspraken past. Dit is geen algemeen verbod op request-, feature- of UI-tests.
 
 ---
 
@@ -130,6 +168,8 @@ Leg in eigen woorden uit **wat er technisch moet gebeuren**:
 - Welke onderdelen/bestanden raakt dit waarschijnlijk?
 - Welke aannames of open vragen zijn er?
 - Welke risico's / edge cases?
+- Welke bestaande implementatie en contracten zijn het uitgangspunt, en welk concreet
+  gedrag moet op welk testniveau worden beschermd? Pas de ontwerp- en testafspraken hierboven toe.
 - Raakt dit een **interface**? Stel dan nu al vast of het een **Pulse-interface** is
   (zie stap 5) en verwerk dat in je plan.
 
@@ -256,6 +296,10 @@ rg -l "pulse_head|Pulse::|Pulse::Backend" app 2>/dev/null | head
     de lijst met beschikbare skills toont, en volg hem.
   - Twijfel je of een component bestaat? Zoek het op in de skill; verzin geen eigen variant.
 - **Geen Pulse?** Volg de bestaande UI-conventies van de repo.
+- Bepaal dit voor het **betrokken scherm**, niet alleen voor de app. Meng geen oude en
+  nieuwe Pulse of andere UI-stacks voor een kleine wijziging; een migratie moet expliciet
+  onderdeel van het goedgekeurde plan zijn. Controleer relevante lege toestanden en of
+  dezelfde records toegankelijk blijven als in de omliggende interface.
 
 Zorgen hooks in jouw setup automatisch voor formatten/linten van gewijzigde files? Vertrouw
 daarop. Zo niet, draai de stack-specifieke formatter/linter en relevante tests dan zelf, en
@@ -285,7 +329,14 @@ Loop hierbij zelf ook nog even de diff na op de harde code-afspraken bovenaan:
 - haal toegevoegde **inline comments** weg (op de functionele uitzonderingen na);
 - controleer dat alle nieuwe en gewijzigde tests volledig in het Engels zijn;
 - controleer iedere toegevoegde guard, `rescue`/`catch`, fallback en retry en verwijder die
-  tenzij er een concreet verwacht foutscenario en vereist herstelgedrag voor bestaat.
+  tenzij er een concreet verwacht foutscenario en vereist herstelgedrag voor bestaat;
+- controleer of de code direct leesbaar is, verantwoordelijkheden helder zijn en de gekozen
+  patronen overeenkomen met de onderzochte contracten;
+- controleer of tests de bedoelde regressie op het passende niveau bewijzen, zonder
+  onnodige duplicatie of brede requests voor triviale assertions;
+- verwijder eigen tijdelijke onderzoeksbestanden en ongebruikte toevoegingen uit de diff,
+  tenzij ze expliciet onderdeel van het afgesproken resultaat zijn. Ruim geen bestaande
+  code op als bijvangst.
 
 ```bash
 git diff main...HEAD | grep -nE '^\+\s*(#|//|/\*|<!--)'
