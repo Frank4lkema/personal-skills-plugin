@@ -1,7 +1,7 @@
 {
   "name": "story-skills",
   "description": "Persoonlijke workflow-skills voor Shortcut-stories, gezamenlijke PR-feedback en security-updates.",
-  "version": "1.21.0",
+  "version": "1.21.1",
   "author": {
     "name": "Frank Alkema"
   },

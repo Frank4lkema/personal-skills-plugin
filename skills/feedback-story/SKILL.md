@@ -27,9 +27,25 @@ in Pi als de tekst die onder deze skill wordt toegevoegd). Gebruik die waarde ov
 de basis-workflow `<STORY_ID>` schrijft. Ontbreekt de id of is hij niet eenduidig, vraag
 er dan om voordat je begint.
 
+## Shortcut-comments — altijd eerst goedkeuring
+
+**Plaats nooit een comment in Shortcut zonder mijn expliciete goedkeuring voor die exacte
+tekst.** Deze regel geldt voor de hele feedback-story-workflow, inclusief de Afslag bij
+uitkomst A of B en de PO-/rechtencomment uit basis-stap 10. Waar de gedeelde basis opdracht
+geeft om een Shortcut-comment te plaatsen, geldt eerst deze goedkeuringsgate:
+
+1. Toon de story-id en de volledige concepttekst in de chat.
+2. Vraag of je deze tekst onder die story mag plaatsen en wacht op mijn expliciete akkoord.
+3. Plaats alleen de goedgekeurde tekst. Verander je de tekst, vraag dan opnieuw akkoord.
+
+Akkoord op de scope, het plan of de implementatie is geen toestemming om een comment te
+plaatsen. Geen antwoord betekent wachten, niet plaatsen. Wil ik geen comment, sla het
+plaatsen over en vermeld dat eerlijk in het eindrapport; presenteer een concept nooit als
+geplaatst. Dit geldt ongeacht of je MCP of de REST API gebruikt.
+
 ## Uitvoeren
 
-Lees de gedeelde workflow en volg die stappen:
+Lees de gedeelde workflow en volg die stappen met bovenstaande goedkeuringsgate:
 
 **Lees:** `story-base.md` (in deze skill-map, naast dit bestand). Het is een
 gegenereerde kopie van `skills/_shared/story-base.md` — wijzigingen horen in die bron.
@@ -43,7 +59,7 @@ Volgorde voor een feedback-story:
    een voorgestelde oplossing; zoek het onderliggende probleem.
 3. **→ STAP 2b hieronder: scope-check (harde gate).** Hier splitst de route:
    - **Past in klein bestek** → door met stap 4 en verder.
-   - **Te groot of geen wijziging nodig** → **Afslag** (zie onder): comment + Obsidian, klaar.
+   - **Te groot of geen wijziging nodig** → **Afslag** (zie onder): comment na mijn akkoord + Obsidian.
 4. Plan opstellen via **Plannotator** (annotate → verwerken → akkoord)
 5. Branch aanmaken uit Shortcut (moet `sc-<STORY_ID>` bevatten)
 6. Zelf het plan uitvoeren en checks draaien in de hoofdcontext — **blijf binnen het bestek
@@ -53,7 +69,7 @@ Volgorde voor een feedback-story:
 8. Pull request maken
 9. Wachten op Greptile
 10. Greptile-comments samen beoordelen en pas na mijn expliciete akkoord verwerken
-11. Nieuwe route? → PO-rechten onder de story
+11. Nieuwe route? → PO-/rechtencomment voorleggen en alleen na mijn akkoord onder de story plaatsen
 12. Naar staging? → vragen of het gedeployed moet, op welk sprint-kanaal en onder welke naam
 13. Testen — eerst vragen met welke gebruiker, daarna mij om een UI-check vragen
 14. Vastleggen in Obsidian (type: feedback) — zet bij "Validatie / scope-check" de uitkomst
@@ -110,8 +126,11 @@ te maken.
 
 ## Afslag — story eindigt zonder code (uitkomst A of B)
 
-1. **Comment onder de story in Shortcut.** Houd het kort: één of twee regels, genoeg voor de
-   PO om een beslissing te nemen. Geen implementatiedetails, geen analyse-samenvatting.
+1. **Conceptcomment voorleggen, pas na akkoord plaatsen.** Houd het kort: één of twee regels,
+   genoeg voor de PO om een beslissing te nemen. Geen implementatiedetails, geen
+   analyse-samenvatting. Toon eerst de exacte tekst en de story-id en vraag toestemming om
+   te plaatsen. Wacht op mijn antwoord; gebruik onderstaande MCP/API pas na expliciet akkoord.
+   Wil ik geen comment, sla het plaatsen over en ga verder met stap 2.
    - Uitkomst A: `Geen wijziging nodig: <reden in één zin>.`
    - Uitkomst B: `Past niet binnen klein bestek: <reden in één zin>. Nodig: <beslissing of refinement door de PO>.`
    - Via Shortcut MCP: gebruik de "add comment to story"-tool op story `<STORY_ID>`.
@@ -129,8 +148,8 @@ te maken.
    - `Branch: n.v.t.` en `PR: n.v.t.`
    - Onder "Validatie / scope-check": welke criteria uit 2b de doorslag gaven.
 3. **Sla de stappen 4 t/m 13 over.** Geen branch, geen PR, geen staging-deploy, geen test.
-4. **Rapporteer** aan mij: de uitkomst, de reden, de geplaatste comment en het pad van de
-   Obsidian-notitie.
+4. **Rapporteer** aan mij: de uitkomst, de reden, de geplaatste comment (of dat op mijn verzoek
+   geen comment is geplaatst) en het pad van de Obsidian-notitie.
 
 > Verandert de PO daarna van gedachten ("doe toch maar")? Dan start je de story opnieuw op —
 > basis-stap 0 ziet dat er nog geen branch of PR is en je begint gewoon bij het plan.
