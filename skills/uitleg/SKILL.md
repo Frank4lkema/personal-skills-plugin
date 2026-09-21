@@ -23,9 +23,9 @@ bijwerkt is de notitie in de vault.
 
 ## Pas aan je harness aan
 
-- **Subagents** (bv. Claude Code `Task`/`Explore`)? Laat die het zoekwerk doen — één per
-  deelvraag of per repo — en houd de hoofdcontext voor het begrijpen en schrijven. Geen
-  subagents (bv. Pi standaard)? Doe het read-only in de hoofdcontext.
+- **Hoofdagent:** doe al het zoekwerk, analyseren en schrijven zelf in de hoofdcontext,
+  ook over meerdere repo's. Start geen subagents per deelvraag of repo. Deze workflow heeft
+  geen aparte reviewstap en start dus ook geen reviewer.
 - **Vault-toegang:** gebruik de Obsidian MCP of de `obsidian-cli`-skill. Weet je het vaultpad
   niet? Vraag het — raad het niet en schrijf niet zomaar ergens een bestand neer.
 

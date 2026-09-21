@@ -38,7 +38,7 @@ Volgorde voor een feedback-story:
 
 0. Hervatten-check — ligt er al werk voor deze story? (basis-stap 0)
 1. Story ophalen via de **`shortcut-story-api`-skill** (REST API — géén browser)
-2. Analyseren en uitleggen (read-only; met subagent indien beschikbaar) — richt de analyse
+2. Zelf analyseren en uitleggen in de hoofdcontext (read-only) — richt de analyse
    op **wat de melder écht vraagt**, niet op de letterlijke formulering. Feedback is vaak
    een voorgestelde oplossing; zoek het onderliggende probleem.
 3. **→ STAP 2b hieronder: scope-check (harde gate).** Hier splitst de route:
@@ -46,10 +46,10 @@ Volgorde voor een feedback-story:
    - **Te groot of geen wijziging nodig** → **Afslag** (zie onder): comment + Obsidian, klaar.
 4. Plan opstellen via **Plannotator** (annotate → verwerken → akkoord)
 5. Branch aanmaken uit Shortcut (moet `sc-<STORY_ID>` bevatten)
-6. Plan uitvoeren (subagents indien beschikbaar, anders in de hoofdcontext) — **blijf binnen
-   het bestek dat je in 2b hebt vastgesteld**. Loopt het tijdens de uitvoering alsnog uit,
-   stop dan en neem de Afslag alsnog; maak het niet stilzwijgend groter.
-7. Self-review via **Plannotator Review**
+6. Zelf het plan uitvoeren en checks draaien in de hoofdcontext — **blijf binnen het bestek
+   dat je in 2b hebt vastgesteld**. Loopt het tijdens de uitvoering alsnog uit, stop dan en
+   neem de Afslag alsnog; maak het niet stilzwijgend groter.
+7. Eén aparte read-only reviewer indien beschikbaar, daarna **Plannotator Review**; fixes zelf uitvoeren
 8. Pull request maken
 9. Wachten op Greptile
 10. Greptile-comments samen beoordelen en pas na mijn expliciete akkoord verwerken

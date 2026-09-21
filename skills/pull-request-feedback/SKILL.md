@@ -15,6 +15,14 @@ Loop samen door de feedback op de pull request van één Shortcut-story. De gebr
 alleen de story-id mee te geven. Deze skill is bewust interactief: **één comment tegelijk,
 geen automatische fixes en nooit zelfstandig reageren op GitHub.**
 
+## Agentindeling
+
+De hoofdagent onderzoekt en bespreekt zelf de bestaande reviewfeedback, voert de
+uitdrukkelijk goedgekeurde fixes uit en draait de checks. Start daarvoor geen analyse-,
+uitvoer- of testagents. Deze workflow voegt geen nieuwe onafhankelijke reviewronde toe;
+alleen als ik daarom vraag gebruik je één aparte read-only reviewer. Die adviseert alleen:
+alle onderstaande goedkeuringsgates blijven gelden en je voert eventuele fixes zelf uit.
+
 ## Story-id
 
 Gebruik het argument als story-id en normaliseer `123`, `sc-123` en een Shortcut-URL naar

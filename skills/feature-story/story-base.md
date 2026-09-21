@@ -11,16 +11,16 @@ overgeslagen. Vervang overal `<STORY_ID>` door de door de wrapper meegegeven sto
 Deze workflow draait in meerdere agents (o.a. Claude Code en Pi). Twee dingen verschillen
 per harness — stem je aanpak daarop af:
 
-- **Subagents.** Heeft je harness subagents, gebruik dan rollen in plaats van concrete
-  modelnamen: zo blijft modelkeuze deployment-configuratie. In **Pi met pi-subagents** geldt
-  de vaste route `oracle` (read-only analyse) → menselijke plangoedkeuring → één `worker`
-  (uitvoering) → `reviewer` (read-only controle). De Pi-instellingen bepalen welk model bij
-  iedere rol hoort. Geef de `worker` het volledige goedgekeurde plan inclusief codevoorbeelden;
-  laat nooit meerdere writers tegelijk in dezelfde worktree werken. In Claude Code kun je
-  `Task`/`Explore` gebruiken voor read-only verkenning en onafhankelijk testwerk. Heeft het
-  harness geen subagents, doe het werk dan in de hoofdcontext. Zijn subagents wél beschikbaar
-  maar faalt hun infrastructuur of start, schakel dan niet stilzwijgend over: meld de fout en
-  vraag hoe verder te gaan.
+- **Agentindeling: hoofdagent + één reviewer.** De hoofdagent doet zelf het onderzoek, de
+  analyse, planning, uitvoering, tests (ook via de UI) en alle reviewfixes. Houd die context
+  bij elkaar: start geen aparte analyse-, uitvoer- of testagents, ook niet per deelvraag of
+  repo. Alleen de onafhankelijke review in stap 6 gaat naar één read-only subagent met een
+  verse context. In **Pi met pi-subagents** gebruik je daarvoor de rol `reviewer`; in andere
+  harnessen een gelijkwaardige read-only reviewagent. Modelkeuze blijft harness-configuratie.
+  De hoofdagent blijft de enige writer. Heeft het harness geen subagents, doe dan zelf de
+  review en meld dat die niet onafhankelijk is. Zijn subagents wél beschikbaar maar faalt
+  hun infrastructuur of start, schakel dan niet stilzwijgend over: meld de fout en vraag
+  hoe verder te gaan.
 - **Kwaliteitschecks.** Draaien er hooks die automatisch formatten, linten, testen en
   route-detectie doen (typische Claude Code-setup)? Vertrouw daarop. Zo niet (bv. Pi)?
   Draai de stack-specifieke formatter, linter, tests en route-check dan zélf expliciet, en
@@ -68,7 +68,7 @@ vereenvoudigen is geen reden om noodzakelijke foutafhandeling of beveiliging weg
 ### Ontwerp- en testafspraken uit collegiale reviews
 
 Deze afspraken gelden bij analyse, planning, uitvoering en self-review. Geef ze ook mee aan
-uitvoerende en reviewende subagents. Projectspecifieke conventies blijven projectspecifiek:
+de read-only reviewer. Projectspecifieke conventies blijven projectspecifiek:
 maak van één reviewvoorkeur geen universeel verbod.
 
 **Ontwerpheuristiek:** “Solve the task correctly, but your score gets worse as LOC and
@@ -181,16 +181,10 @@ Leg in eigen woorden uit **wat er technisch moet gebeuren**:
 - Raakt dit een **interface**? Stel dan nu al vast of het een **Pulse-interface** is
   (zie stap 5) en verwerk dat in je plan.
 
-Verken de codebase **read-only**, beknopt, en lees alleen wat relevant is voor de story:
-- **Pi met pi-subagents:** gebruik `oracle` read-only voor de technische analyse. Laat die
-  oorzaak/gedrag, relevante bestanden, aannames, risico's en edge cases onderbouwen met
-  concrete bronverwijzingen. De hoofdagent beoordeelt en vertaalt dit daarna naar het plan;
-  `oracle` keurt niets goed en voert niets uit.
-- **Andere harness met subagents:** gebruik een read-only Explore-subagent zodat de
-  hoofdcontext niet volloopt ("Zoek uit hoe X nu werkt en welke bestanden relevant zijn;
-  geef een beknopte kaart terug").
-- **Zonder subagents:** verken zelf read-only in de hoofdcontext met `read` en gerichte
-  `bash`-commando's zoals `rg` en `find`.
+Verken als hoofdagent zelf de codebase **read-only**, beknopt, en lees alleen wat relevant
+is voor de story. Gebruik `read` en gerichte zoekcommando's. Onderbouw oorzaak/gedrag,
+relevante bestanden, aannames, risico's en edge cases met concrete bronverwijzingen en
+vertaal die zelf naar het plan. Delegeer dit niet: dezelfde agent analyseert en bouwt.
 
 > **Bug-story voegt hier een stap 2b in (read-only validatie-script) — zie de bug-wrapper.**
 > Feature-story slaat 2b over en gaat direct door naar stap 3.
@@ -275,16 +269,10 @@ gegeven. Blijkt tijdens het bouwen dat het anders moet (de code werkt niet, een 
 niet, er is een betere aanpak)? Meld dat expliciet met de reden en het verschil, in plaats van
 stilzwijgend iets anders te bouwen dan ik heb goedgekeurd.
 
-- **Pi met pi-subagents:** start pas na het expliciete planakkoord precies één `worker` als
-  writer voor de actieve branch/worktree. Geef die het volledige goedgekeurde planbestand
-  inclusief codevoorbeelden, de story-acceptatiecriteria en de harde code-afspraken uit deze
-  skill. Laat de worker implementeren en gerichte checks draaien. Bij een noodzakelijke
-  afwijking van het plan moet de worker stoppen en de hoofdagent om een beslissing vragen;
-  een snel uitvoermodel mag ontbrekende ontwerpkeuzes niet zelf invullen.
-- **Andere harness met subagents:** houd eveneens één writer per branch/worktree. Alleen
-  werkelijk onafhankelijk testwerk mag parallel en read-only draaien.
-- **Zonder subagents:** voer uit in de hoofdcontext. Delegeer geen gelijktijdige edits aan
-  losse processen; een aparte, testgerichte run is optioneel als het werk echt onafhankelijk is.
+Implementeer als hoofdagent zelf en draai zelf de gerichte checks. Je bent de enige writer
+voor de actieve branch/worktree; start geen uitvoer- of testsubagent en geen aparte
+agentsessie. Ontbreekt een ontwerpkeuze of is een afwijking van het plan nodig, stop dan
+met dat onderdeel en vraag mij eerst om een beslissing.
 
 ### Werk je aan een interface? → check op Pulse
 
@@ -316,11 +304,18 @@ hele repo die ongerelateerde bestanden kan wijzigen.
 
 ## 6. Self-review (reviewer + Plannotator Review)
 
-Gebruik in **Pi met pi-subagents** eerst een verse, read-only `reviewer` om de uitgevoerde
-wijzigingen tegen het goedgekeurde plan, de story en de harde code-afspraken te controleren.
-De reviewer mag niets wijzigen; de hoofdagent beoordeelt bevindingen en laat alleen concrete
-correcties door de ene `worker` uitvoeren. Laat een correctie die het goedgekeurde ontwerp
-verandert eerst opnieuw goedkeuren.
+Gebruik, als je harness subagents ondersteunt, één aparte, read-only reviewer met een verse
+context (in **Pi met pi-subagents**: `reviewer`). Geef het goedgekeurde plan inclusief
+codevoorbeelden, de story-acceptatiecriteria, de relevante projectafspraken, de branch/worktree
+met de te beoordelen diff en de uitgevoerde checks mee. Laat de reviewer de wijzigingen
+onafhankelijk controleren en concrete bevindingen met bronverwijzingen teruggeven.
+
+De reviewer wijzigt niets en delegeert niet verder. Beoordeel als hoofdagent de bevindingen,
+voer zelf de nodige correcties uit en draai de relevante checks opnieuw. Laat een correctie
+die het goedgekeurde ontwerp verandert eerst opnieuw goedkeuren. Is een herbeoordeling nodig,
+hergebruik dan waar mogelijk dezelfde reviewer; start geen parallelle reviewers. Heeft het
+harness geen subagents, voer deze controle zelf uit en meld dat een onafhankelijke review
+ontbreekt. Bij een fout in de review-infrastructuur: stop, meld de fout en vraag hoe verder.
 
 Doe daarna vóór de PR een self-review van de wijzigingen met **Plannotator Review** op de
 huidige worktree:
@@ -597,13 +592,8 @@ door het scherm heen klikken, niet alleen via console of specs. Rapporteer pass/
 concreet bewijs (screenshot, URL, wat je zag) en sluit alle gestarte servers/processen na
 afloop af. Bij een failure: herstel, draai de relevante checks opnieuw en herhaal de test.
 
-- **Met subagents:** laat een subagent de app draaien en de scenario's testen ("Start de app
-  lokaal, log in als `<gebruiker uit 12a>`, test de acceptatiecriteria van story `<STORY_ID>`
-  end-to-end via de UI, rapporteer pass/fail met bewijs, sluit de server daarna af"). Een
-  `SubagentStop`-hook checkt daarna of het testen echt is uitgevoerd.
-- **Zonder subagents:** doe het in de hoofdcontext of in een geïsoleerde, testgerichte run
-  (bv. `pi -p "... test uitsluitend de acceptatiecriteria van story <STORY_ID> ... wijzig geen
-  code en sluit de server na afloop af"`).
+- **Hoofdagent:** voer ook dit testwerk zelf uit in de hoofdcontext. Start geen aparte
+  testagent of agentsessie; jij bewaakt de testuitkomst en verwerkt eventuele fixes.
 - **Met browserautomatisering** (bv. Claude in Chrome/Playwright): gebruik die om de flow
   echt door te klikken in plaats van alleen de pagina op te halen.
 

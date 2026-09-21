@@ -23,6 +23,13 @@ default branch.
 **Geen inline code-comments** in wat je bouwt (huisstijl, zie de story-basis): laat namen en
 de teksten op de pagina het werk doen.
 
+## Agentindeling
+
+De hoofdagent doet zelf het ophalen, analyseren, bouwen en testen in de hoofdcontext.
+Start geen aparte analyse-, uitvoer- of testagents. Deze workflow voegt geen onafhankelijke
+reviewstap toe; alleen als ik daarom vraag gebruik je één aparte read-only reviewer.
+Eventuele reviewfixes voer je zelf uit.
+
 ## 1. Sprint en gebruiker vragen (verplicht)
 
 Alles achter het command is invoer (`$ARGUMENTS`) — daar kan een sprintnummer en/of een naam

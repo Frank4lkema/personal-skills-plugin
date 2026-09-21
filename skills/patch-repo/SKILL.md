@@ -18,6 +18,13 @@ bepalen → mij laten kiezen → per package bumpen, verifiëren en een PR opene
 Dit is bewust **geen** algemene dependency-update. Je bumpt alleen wat nodig is om een
 advisory te dichten, en niets meer.
 
+## Agentindeling
+
+De hoofdagent doet zelf de analyse, wijzigingen en tests in de hoofdcontext, ook bij
+meerdere repo's of packages. Start geen aparte analyse-, uitvoer- of testagents. Deze
+workflow voegt geen onafhankelijke reviewstap toe; alleen als ik daarom vraag gebruik je
+één aparte read-only reviewer. Eventuele reviewfixes voer je zelf uit.
+
 ## Welke repo
 
 De repo's krijg je mee als argument (`owner/repo`, meerdere mag). Ontbreken ze, gebruik dan

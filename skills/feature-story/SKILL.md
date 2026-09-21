@@ -31,11 +31,11 @@ Feature-story = de gedeelde basis zoals hij is:
 
 0. Hervatten-check — ligt er al werk voor deze story? (basis-stap 0)
 1. Story ophalen via de **`shortcut-story-api`-skill** (REST API — géén browser)
-2. Analyseren en uitleggen (read-only; met subagent indien beschikbaar)
+2. Zelf analyseren en uitleggen in de hoofdcontext (read-only)
 3. Plan opstellen via **Plannotator** (annotate → verwerken → akkoord)
 4. Branch aanmaken uit Shortcut (moet `sc-<STORY_ID>` bevatten)
-5. Plan uitvoeren (subagents indien beschikbaar, anders in de hoofdcontext)
-6. Self-review via **Plannotator Review**
+5. Zelf het plan uitvoeren en checks draaien in de hoofdcontext
+6. Eén aparte read-only reviewer indien beschikbaar, daarna **Plannotator Review**; fixes zelf uitvoeren
 7. Pull request maken
 8. Wachten op Greptile
 9. Greptile-comments samen beoordelen en pas na mijn expliciete akkoord verwerken

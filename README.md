@@ -24,6 +24,13 @@ verder te gaan in plaats van bij stap 1. De **bron** van de basis staat in
 **gegenereerde kopie** (`story-base.md`) zodat elke skill self-contained is en ook los
 installeerbaar via tools als `npx skills`. De kopieën houd je bij met `npm run sync`.
 
+Alle workflows houden onderzoek, analyse, planning, uitvoering, tests en fixes bij de
+**hoofdagent**. Alleen een onafhankelijke review gaat naar **één aparte read-only reviewer**;
+geen losse analyse-, uitvoer- of testagents meer. De story-workflows gebruiken die reviewer
+vóór Plannotator Review. De overige workflows krijgen hierdoor geen extra reviewstap.
+Zonder subagentondersteuning doet de hoofdagent ook de review, met de expliciete melding
+dat die niet onafhankelijk is.
+
 De inhoud is **harness-agnostisch** geschreven: waar Claude Code en Pi verschillen
 (subagents, hooks, arg-injectie, reviewbot-watcher) kiest de workflow de juiste aanpak op
 basis van wat je harness kan. Zo is er één bron voor beide. `allowed-tools` staat bewust

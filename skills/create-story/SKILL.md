@@ -14,6 +14,11 @@ argument-hint: "[wat er moet gebeuren] [--go]"
 Maak snel één Shortcut-story van wat ik in één zin roep. **Kort houden is het punt van deze
 skill:** een titel en maximaal drie zinnen, met de velden meteen goed gezet.
 
+## Agentindeling
+
+Voer deze workflow volledig zelf uit als hoofdagent. Start geen subagents voor onderzoek,
+schrijven of aanmaken van de story; deze workflow heeft geen aparte reviewstap.
+
 ## Wat ik meegeef
 
 Alles achter het command is de intentie (`$ARGUMENTS`). Is die leeg, vraag dan in één regel
