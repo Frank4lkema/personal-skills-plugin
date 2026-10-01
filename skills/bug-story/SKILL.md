@@ -36,7 +36,7 @@ Volgorde voor een bug-story:
 2. Zelf analyseren en uitleggen in de hoofdcontext (read-only) — richt de analyse
    op de **oorzaak**, niet alleen het symptoom.
 3. **→ STAP 2b hieronder: validatie met read-only Ruby-script (harde gate).**
-4. Plan opstellen via **Plannotator** (annotate → verwerken → akkoord)
+4. Plan opstellen via **Plannotator** (annotate → verwerken + beslissingenlog onderaan → akkoord)
 5. Branch aanmaken uit Shortcut (moet `sc-<STORY_ID>` bevatten)
 6. Zelf het plan uitvoeren en checks draaien in de hoofdcontext — **alleen de bug fixen**,
    geen extra features/refactors tenzij nodig voor de fix.

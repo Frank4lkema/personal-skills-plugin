@@ -200,6 +200,27 @@ Stel een concreet, stapsgewijs implementatieplan op en laat mij het annoteren me
 3. Verwerk de teruggekomen annotaties in het plan.
 4. Herhaal 2–3 tot ik akkoord ben.
 
+### Beslissingenlog onderaan het plan
+
+Kwam er feedback via Plannotator, verwerk die dan niet alleen in het plan zelf, maar zet hem
+ook onderaan het plan in een vaste sectie, zodat ik in één oogopslag zie welke beslissingen
+er zijn genomen:
+
+```markdown
+## Feedback & beslissingen
+
+1. **Vraag/feedback:** <mijn annotatie, kort samengevat of letterlijk>
+   **Antwoord:** <wat je ermee hebt gedaan en waarom — welke keuze, waar in het plan>
+2. **Vraag/feedback:** …
+   **Antwoord:** …
+```
+
+- Eén item per annotatie; bundel alleen annotaties die over precies hetzelfde gaan.
+- Elke annotatieronde vult de lijst aan; haal eerdere items niet weg. Draait een latere
+  ronde een eerdere beslissing terug, zeg dat in het nieuwe antwoord.
+- Neem je feedback niet (volledig) over, zeg dat expliciet in het antwoord, met de reden.
+- Geen feedback gehad? Laat de sectie dan weg.
+
 ### Het plan bevat de concrete code — niet alleen een beschrijving
 
 Ik wil in het plan **zien hoe de code eruit komt te zien**, zodat ik op de code zelf kan

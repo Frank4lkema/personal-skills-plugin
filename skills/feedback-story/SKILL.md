@@ -60,7 +60,7 @@ Volgorde voor een feedback-story:
 3. **→ STAP 2b hieronder: scope-check (harde gate).** Hier splitst de route:
    - **Past in klein bestek** → door met stap 4 en verder.
    - **Te groot of geen wijziging nodig** → **Afslag** (zie onder): comment na mijn akkoord + Obsidian.
-4. Plan opstellen via **Plannotator** (annotate → verwerken → akkoord)
+4. Plan opstellen via **Plannotator** (annotate → verwerken + beslissingenlog onderaan → akkoord)
 5. Branch aanmaken uit Shortcut (moet `sc-<STORY_ID>` bevatten)
 6. Zelf het plan uitvoeren en checks draaien in de hoofdcontext — **blijf binnen het bestek
    dat je in 2b hebt vastgesteld**. Loopt het tijdens de uitvoering alsnog uit, stop dan en
