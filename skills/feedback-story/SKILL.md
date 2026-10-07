@@ -73,7 +73,8 @@ Volgorde voor een feedback-story:
 12. Naar staging? → vragen of het gedeployed moet, op welk sprint-kanaal en onder welke naam
 13. Testen — eerst vragen met welke gebruiker, daarna mij om een UI-check vragen
 14. Vastleggen in Obsidian (type: feedback) — zet bij "Validatie / scope-check" de uitkomst
-    van stap 2b, en bij "Uitkomst" `geïmplementeerd`.
+    van stap 2b, en bij "Uitkomst" `geïmplementeerd`. Ruim daarna automatisch de story-worktree
+    op volgens basis-stap 13a.
 
 ---
 
@@ -147,6 +148,8 @@ te maken.
    - `Uitkomst: geen wijziging — <A: werkt zoals bedoeld / dubbel / PO-beslissing, of B: te groot>`
    - `Branch: n.v.t.` en `PR: n.v.t.`
    - Onder "Validatie / scope-check": welke criteria uit 2b de doorslag gaven.
+   - Ruim na succesvol opslaan een eventueel bestaande story-worktree automatisch op volgens
+     basis-stap 13a. Zonder aparte worktree is dit `n.v.t.`.
 3. **Sla de stappen 4 t/m 13 over.** Geen branch, geen PR, geen staging-deploy, geen test.
 4. **Rapporteer** aan mij: de uitkomst, de reden, de geplaatste comment (of dat op mijn verzoek
    geen comment is geplaatst) en het pad van de Obsidian-notitie.

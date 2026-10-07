@@ -244,6 +244,9 @@ repository en maak nog geen branch. Dat gebeurt pas in stap 4 en 5.
 
 > Raakt het een Pulse-interface (zie stap 5)? Laat de code dan al met Pulse-componenten zien
 > (`ui.<naam>`, `Pulse::FormBuilder`), niet met losse HTML/Tailwind die je later nog omzet.
+>
+> Bevat het plan een migratie (zie stap 5)? Laat die dan al in de Strong Migrations-veilige
+> vorm zien, inclusief eventuele opsplitsing in meerdere migraties of deploys.
 
 **Harde gate:** ga pas naar stap 4 nadat ik het geannoteerde plan heb goedgekeurd.
 
@@ -274,7 +277,8 @@ fi
 
 Ging het via `wg`? Draai **alle** vervolgstappen in het pad dat `wg path` teruggaf, niet in
 de primaire checkout. Meld dat pad en de poort (`wg env "$BRANCH"` toont `WG_PORT`) in je
-samenvatting, zodat ik weet waar de story draait.
+samenvatting, zodat ik weet waar de story draait. Bewaar ook het primaire checkout-pad,
+het exacte story-worktree-pad en de branchnaam voor het opruimen na stap 13.
 
 Harde eis: de branch-naam bevat `sc-<STORY_ID>`. Controleer dit; ontbreekt het, stop dan
 en vraag mij om de juiste naam — anders linkt Shortcut de branch niet.
@@ -316,6 +320,42 @@ rg -l "pulse_head|Pulse::|Pulse::Backend" app 2>/dev/null | head
   onderdeel van het goedgekeurde plan zijn. Controleer relevante lege toestanden en of
   dezelfde records toegankelijk blijven als in de omliggende interface.
 
+### Maak je een migratie? → check op Strong Migrations
+
+Voeg je een database-migratie toe of wijzig je er een? Controleer dan **eerst** of de app
+**Strong Migrations** gebruikt:
+
+```bash
+grep -n "strong_migrations" Gemfile Gemfile.lock 2>/dev/null
+ls config/initializers/strong_migrations.rb 2>/dev/null
+```
+
+- **Gebruikt de app het?** Schrijf de migratie dan **meteen** volgens de Strong
+  Migrations-regels, niet pas nadat de gem hem blokkeert. Lees de initializer voor
+  projectspecifieke instellingen (bv. `start_after`, `target_version`, timeouts,
+  `auto_analyze`) en volg de veilige variant uit de
+  [Strong Migrations-README](https://github.com/ankane/strong_migrations#checks). Let in
+  ieder geval op:
+  - **Index toevoegen** op een bestaande tabel (PostgreSQL): `algorithm: :concurrently`
+    met `disable_ddl_transaction!`.
+  - **Foreign key toevoegen**: `validate: false`, en valideren in een **aparte** migratie.
+  - **Kolom verwijderen**: eerst `self.ignored_columns` in het model deployen, pas daarna
+    de kolom droppen.
+  - **Kolom hernoemen of type wijzigen**, **tabel hernoemen**: niet direct; nieuwe kolom
+    of tabel, data overzetten, code omzetten, oude weghalen.
+  - **`NOT NULL` op een bestaande kolom**: via een check constraint met `validate: false`
+    en een aparte validatie-migratie.
+  - **Data backfillen**: niet in dezelfde migratie als de schemawijziging, buiten een
+    transactie en in batches.
+  - **`safety_assured`** alleen als je kunt uitleggen waarom het in dit geval veilig is;
+    zet die reden in het plan en vraag mij er expliciet akkoord op.
+- **Gebruikt de app het niet?** Volg de bestaande migratieconventies van de repo, maar
+  houd dezelfde risico's (locks, lange transacties, downtime bij deploy) in het oog.
+
+Draai de migratie lokaal (`bin/rails db:migrate`) zodat Strong Migrations hem controleert,
+en controleer dat `db/schema.rb` of `db/structure.sql` alleen de bedoelde wijziging bevat.
+Dit hoort ook bij de self-review in stap 6.
+
 Zorgen hooks in jouw setup automatisch voor formatten/linten van gewijzigde files? Vertrouw
 daarop. Zo niet, draai de stack-specifieke formatter/linter en relevante tests dan zelf, en
 blijf herstellen tot de relevante checks slagen. Gebruik geen generieke auto-fix over de
@@ -327,7 +367,8 @@ Gebruik, als je harness subagents ondersteunt, één aparte, read-only reviewer 
 context (in **Pi met pi-subagents**: `reviewer`). Geef het goedgekeurde plan inclusief
 codevoorbeelden, de story-acceptatiecriteria, de relevante projectafspraken, de branch/worktree
 met de te beoordelen diff en de uitgevoerde checks mee. Laat de reviewer de wijzigingen
-onafhankelijk controleren en concrete bevindingen met bronverwijzingen teruggeven.
+onafhankelijk controleren en concrete bevindingen met bronverwijzingen teruggeven. Zit er een
+migratie in de diff, laat de reviewer die dan expliciet toetsen aan Strong Migrations (stap 5).
 
 De reviewer wijzigt niets en delegeert niet verder. Beoordeel als hoofdagent de bevindingen,
 voer zelf de nodige correcties uit en draai de relevante checks opnieuw. Laat een correctie
@@ -662,6 +703,7 @@ Notitie-inhoud (template):
 - **Uitkomst:** <geïmplementeerd | geen wijziging — reden>
 - **Branch:** <branch-naam of n.v.t.>
 - **Worktree:** <pad + poort, of n.v.t. als het in de hoofdcheckout ging>
+- **Worktree-opruiming:** <nog uit te voeren / verwijderd / geblokkeerd — reden / n.v.t.>
 - **PR:** <pr-link of n.v.t.>
 - **Staging:** <kanaal + naam, bv. `sprint11 master` — of niet gedeployed>
 
@@ -685,11 +727,48 @@ scope-check — feature: n.v.t.>
 <optioneel>
 ```
 
+### 13a. Story-worktree automatisch opruimen
+
+**Zodra de Obsidian-notitie succesvol is opgeslagen, verwijder je altijd de aparte
+worktree van deze story, zonder nogmaals toestemming te vragen.** Alleen een PR openen
+is niet het opruimmoment: de worktree blijft beschikbaar voor reviewfixes en tests tot
+het vastleggen in Obsidian. Mislukt het opslaan, ruim dan nog niet op.
+
+1. Controleer met `git worktree list --porcelain` het exacte pad en de branch. Verwijder
+   uitsluitend de aparte worktree die bij deze story hoort, nooit de primaire checkout
+   of een worktree van ander werk. Geen aparte worktree? Noteer `n.v.t.`.
+2. Stop de voor deze story gestarte servers en processen. Controleer de lokale wijzigingen,
+   untracked én ignored bestanden en of alle story-commits op de remote staan. Een open,
+   nog niet gemergede PR is geen reden om de worktree te behouden als alles veilig gepusht is.
+   Controleer de remote daadwerkelijk; een verouderde remote-tracking ref is geen bewijs.
+3. Stel lokaal te bewaren materiaal eerst veilig buiten de worktree en verifieer de kopie.
+   Denk ook aan het untracked validatiescript van een bug-story, planbestanden en testbewijs.
+   Bewaar gevoelige bestanden alleen lokaal op een privéplek, niet in de vault of Git.
+   Verplaats veiliggestelde losse storybestanden uit de worktree nadat de kopie is
+   gecontroleerd. Wegwerpbare buildoutput, caches en reproduceerbare dependencies hoeven
+   niet bewaard te blijven. Verwijder geen niet-gepushte wijzigingen en maak hiervoor niet ongevraagd een
+   commit of push. Kun je werk niet veiligstellen of is de eigenaar/doelmap onduidelijk,
+   meld dan de blokkade en vraag wat ermee moet gebeuren; opruimen blijft openstaan.
+4. Wissel naar de primaire checkout, ook voor alle volgende toolcalls. Verwijder vervolgens
+   de gecontroleerde story-worktree met `git worktree remove "<exact-story-worktree-pad>"`.
+   Gebruik geen `--force`, `rm -rf`, branch-delete of bulk-cleanup om controles te omzeilen.
+   Heeft lokale tooling aanvullende lifecycle-stappen nodig, controleer dan eerst de
+   projectinstructies en helptekst. Branch en PR blijven behouden; alleen de worktree gaat weg.
+5. Controleer dat de map én de registratie in `git worktree list --porcelain` verdwenen zijn.
+   Werk daarna de Obsidian-notitie bij met `Worktree-opruiming: verwijderd` en eventuele
+   lokale bewaarpaden (geen geheime inhoud). Mislukt verwijderen of bijwerken, meld de
+   werkelijke status; claim nooit dat opruimen gelukt is zonder controle.
+
+Dit geldt ook bij hervatten en bij de feedback-afslag zonder code, als daarvoor al een
+story-worktree bestond. Is de worktree al verwijderd, maak hem niet opnieuw aan voor deze
+stap. Een blokkade is geen reden om opruimen stilzwijgend over te slaan.
+
 ## Afronden
 
 Rapporteer beknopt: branch-naam (en het worktree-pad + de poort als je er een hebt
 aangemaakt), wat is gebouwd/gefixt, PR-link, Greptile-status, eventuele
 PO-actie onder de story, het staging-kanaal + de naam (of dat er niet gedeployed is), de
 testuitkomst (met welke gebruiker getest, en wat je niet hebt kunnen testen), en het pad van
-de aangemaakte Obsidian-notitie. Noem de story pas klaar als
-ik de UI-check uit stap 12c bevestigd heb.
+de aangemaakte Obsidian-notitie. Meld ook dat de story-worktree is verwijderd (of dat er
+geen aparte worktree was), eventuele bewaarpaden en opruimblokkades. Noem de story pas klaar
+als ik de UI-check uit stap 12c bevestigd heb en de worktree-opruiming is afgehandeld.

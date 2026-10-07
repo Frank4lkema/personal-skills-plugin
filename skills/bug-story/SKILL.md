@@ -49,7 +49,8 @@ Volgorde voor een bug-story:
 13. Testen — eerst vragen met welke gebruiker, daarna mij om een UI-check vragen
 14. Vastleggen in Obsidian (type: bug) — plak de validatie-output in de
     "Validatie / scope-check"-sectie als bewijs, met het pad van het validatiescript erbij,
-    en zet `Uitkomst: geïmplementeerd`.
+    en zet `Uitkomst: geïmplementeerd`. Ruim daarna automatisch de story-worktree op volgens
+    basis-stap 13a; stel het validatiescript eerst veilig buiten die worktree.
 
 ---
 

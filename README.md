@@ -24,6 +24,10 @@ verder te gaan in plaats van bij stap 1. De **bron** van de basis staat in
 **gegenereerde kopie** (`story-base.md`) zodat elke skill self-contained is en ook los
 installeerbaar via tools als `npx skills`. De kopieën houd je bij met `npm run sync`.
 
+Na het succesvol vastleggen in Obsidian ruimen de story-workflows automatisch hun aparte
+worktree op, zonder extra bevestiging. Lokaal te bewaren bestanden worden eerst veiliggesteld;
+branch en PR blijven behouden. Alleen een PR openen triggert het opruimen nog niet.
+
 Alle workflows houden onderzoek, analyse, planning, uitvoering, tests en fixes bij de
 **hoofdagent**. Alleen een onafhankelijke review gaat naar **één aparte read-only reviewer**;
 geen losse analyse-, uitvoer- of testagents meer. De story-workflows gebruiken die reviewer
