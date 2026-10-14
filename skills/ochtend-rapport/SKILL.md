@@ -140,9 +140,6 @@ DEPLOY=$(gh api "repos/$REPO/deployments?environment=production&per_page=1" --jq
 - Geen `production`-deployments in die repo → live-status **onbekend**. Zeg dat; ga niet
   gokken op basis van tags of tijdstippen.
 
-Doe hetzelfde met `environment=staging` voor stories in *Ready for Testing*. Let op: staging
-kan per branch deployen; een deploy van de PR-branch zelf telt dan ook.
-
 ### Story-state tegen werkelijkheid
 
 Bepaal per story één volgende actie (de eerste die geldt wint). Heeft een story PR's in
@@ -150,22 +147,23 @@ meerdere repo's, kijk dan naar allemaal en noem welke nog openstaan.
 
 | State in Shortcut | Werkelijkheid | Volgende actie |
 | --- | --- | --- |
+| *Backlog* | — | Geen actie |
+| *Ready for Development* | — | Geen actie |
 | elke | `blocked` | Wacht op een ander — noem de blocker |
 | *Waiting* | — | Lees de laatste comment: waarop wordt gewacht, en is dat er inmiddels? |
-| *Ready for Development* | geen branch/PR | Oppakken met `/feature-story`, `/bug-story` of `/feedback-story <id>` (op basis van `story_type`) |
 | *In Development* | geen PR | Doorwerken — hervatten met hetzelfde command |
 | *In Development* | open PR, niet draft | **State loopt achter** → naar *Ready for Review* |
 | *Ready for Review* | nog open PR's | Volgende actie van die PR (stap 3) |
-| *Ready for Review* | alle PR's gemerged | **State loopt achter** → naar *Ready for Testing*, en testen op staging |
+| *Ready for Review* | alle PR's gemerged | **State loopt achter** → naar *Ready for Testing* |
 | *Ready for Review* | alle PR's gesloten zonder merge | Uitzoeken: nieuwe PR nodig, of story terug/afsluiten? |
 | *Ready for Testing* | nog open PR | **Klopt niet**: eerst reviewen/mergen, of story terug naar *Ready for Review* |
-| *Ready for Testing* | gemerged, op staging | Testen op staging; daarna naar *Ready for Release* |
-| *Ready for Testing* | gemerged, staging onbekend | Testen — controleer eerst zelf of het op staging staat |
+| *Ready for Testing* | alle PR's gemerged | Geen actie — ligt bij de tester |
 | *Ready for Release* | live | **Kan dicht** → naar *Done* |
 | *Ready for Release* | niet live | Wacht op release, of zelf releasen als dat bij mij ligt |
 | *Ready for Release* | live-status onbekend | Controleren of het live staat; daarna naar *Done* |
 
 Elke regel met een vetgedrukte state-wissel is een **voorstel** voor stap 6, geen actie.
+Stories met "Geen actie" horen niet in de doe-lijst.
 
 ## 5. Prioriteren
 
@@ -173,11 +171,10 @@ Maak één geordende lijst voor vandaag. Grofweg:
 
 1. **Anderen wachten op mij** — gevraagde wijzigingen, nieuwe review-comments, vragen in
    Shortcut, falende CI op een PR die al in review stond.
-2. **Bijna klaar** — goedgekeurde PR's om te mergen, stories om te testen op staging,
-   stories die live staan en dicht kunnen, en stories waarvan de state achterloopt.
+2. **Bijna klaar** — goedgekeurde PR's om te mergen, stories die live staan en dicht
+   kunnen, en stories waarvan de state achterloopt.
 3. **Lopend werk** — stories *In Development* (hervatten met `/feature-story <id>`,
    `/bug-story <id>` of `/feedback-story <id>`, passend bij het story-type).
-4. **Nieuw werk** — *Ready for Development*, met deadline of in de lopende iteratie eerst.
 
 Blocked stories en PR's die op een ander wachten horen niet in de doe-lijst, maar wel in een
 apart blokje zodat ik zie wat stilstaat.
@@ -202,7 +199,7 @@ Sinds <peilmoment>: <n> nieuwe review(s), <n> nieuwe comment(s), <n> PR('s) van 
 | Story | State | Werkelijkheid | Volgende actie |
 | [sc-130608](…) Pulse conventie… | Ready for Review | 4/4 PR's gemerged · live in pulse | → *Done* voorstellen |
 | [sc-136504](…) Huidige einddatum… | Ready for Testing | [mother5#10512](…) nog open | Eerst mergen, of terug naar review |
-| [sc-136969](…) Pulse input: foutstatus… | Ready for Development | geen PR | Oppakken met `/bug-story 136969` |
+| [sc-136393](…) Laatste update vertraagde… | Ready for Testing | [mother5#10517](…) gemerged | Geen actie — ligt bij de tester |
 
 ## State bijwerken?
 - sc-130608: Ready for Review → Done (alle PR's gemerged en live)
