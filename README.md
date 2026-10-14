@@ -16,6 +16,7 @@ een gedeelde, stap-voor-stap basis-workflow.
 | `uitleg` | `/uitleg <onderwerp>` | Zoekt uit hoe iets in de codebase écht werkt — deze repo **plus de zusterrepo's één map hoger**, inclusief git-historie voor het *waarom* — en legt het in gewone taal uit in een blijvende notitie onder `Codebase/` in Obsidian. Read-only: wijzigt geen code. Staat los van de story-workflow. |
 | `create-demo` | `/create-demo <sprint> <gebruiker>` | Bouwt de **sprint review-demo**: haalt de afgeronde stories van die persoon uit de sprint, houdt over wat écht in deze repo landde, clustert dat tot een paar herkenbare onderwerpen en bouwt na jouw akkoord één demopagina (route + controller op een wegwerp-branch `demo/sprint<NN>`) met alle schermen in iframes — geen geklik tijdens de review. |
 | `patch-repo` | `/patch-repo [owner/repo …] [--auto]` | Patcht een repo voor **security-updates**: open Dependabot-alerts ophalen → laagst veilige doelversie per package → jij kiest wat er mee moet → per package bumpen, verifiëren en een PR openen. Met `--auto` vervalt die keuze en patcht hij onbewaakt (geen majors, niets forceren) — bedoeld voor een cron-run. Staat los van de story-workflow. |
+| `ochtend-rapport` | `/ochtend-rapport [sinds]` | Mijn **dagstart**: haalt de Shortcut-stories op die op mijn naam staan en al mijn open PR's (over alle repo's), laat zien wat er sinds gisteren 16:00 is veranderd (maandag: sinds vrijdag) en zet per PR en story de volgende actie in een geprioriteerde lijst voor vandaag. Per story vergelijkt hij de Shortcut-state met de **live** PR- en deploystatus (gemerged? op staging? live?) en stelt state-wissels voor die alleen na jouw akkoord worden doorgevoerd. Verder read-only: merget of plaatst niets. Staat los van de story-workflow. |
 
 De drie story-skills volgen dezelfde basis, die begint met een **hervatten-check (stap 0)**:
 bestaat er al een branch, PR of plan voor deze story, dan stelt de workflow voor om daar
@@ -58,6 +59,8 @@ skills/
 │   └── SKILL.md           ← /pull-request-feedback <id> (los van de basis)
 ├── patch-repo/
 │   └── SKILL.md           ← /patch-repo [repo …] [--auto] (los van de basis)
+├── ochtend-rapport/
+│   └── SKILL.md           ← /ochtend-rapport [sinds] (los van de basis)
 ├── create-story/
 │   └── SKILL.md           ← /create-story <intentie> (los van de basis)
 ├── uitleg/
