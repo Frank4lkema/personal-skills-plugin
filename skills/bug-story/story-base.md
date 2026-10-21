@@ -105,6 +105,13 @@ tests, validaties of foutafhandeling om een metric te verbeteren.
   automatisch brede request specs toe voor statische markup, CSS-klassen, losse links of
   reeds afgedekt gedrag; doe dat alleen als het de relevante regressie beschermt en bij de
   projectafspraken past. Dit is geen algemeen verbod op request-, feature- of UI-tests.
+- **Gebruik geen `:unprocessable_entity` meer.** Dit statussymbool (422) is sinds Rack 3.1
+  deprecated; gebruik `:unprocessable_content`. Dat geldt overal waar je een status-symbool
+  noemt: `head`, `render ... status:`, `redirect_to ... status:`, `assert_response` en
+  `have_http_status`. Neem bestaande `:unprocessable_entity` in code die je toch aanraakt
+  mee; ga er niet buiten de story naar zoeken. Draait de app nog op Rack < 3.1
+  (`grep -n "^    rack " Gemfile.lock`), dan bestaat `:unprocessable_content` nog niet:
+  houd dan de bestaande conventie aan.
 
 ---
 
