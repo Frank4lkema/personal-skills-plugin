@@ -17,6 +17,7 @@ een gedeelde, stap-voor-stap basis-workflow.
 | `create-demo` | `/create-demo <sprint> <gebruiker>` | Bouwt de **sprint review-demo**: haalt de afgeronde stories van die persoon uit de sprint, houdt over wat écht in deze repo landde, clustert dat tot een paar herkenbare onderwerpen en bouwt na jouw akkoord één demopagina (route + controller op een wegwerp-branch `demo/sprint<NN>`) met alle schermen in iframes — geen geklik tijdens de review. |
 | `patch-repo` | `/patch-repo [owner/repo …] [--auto]` | Patcht een repo voor **security-updates**: open Dependabot-alerts ophalen → laagst veilige doelversie per package → jij kiest wat er mee moet → per package bumpen, verifiëren en een PR openen. Met `--auto` vervalt die keuze en patcht hij onbewaakt (geen majors, niets forceren) — bedoeld voor een cron-run. Staat los van de story-workflow. |
 | `ochtend-rapport` | `/ochtend-rapport [sinds]` | Mijn **dagstart**: haalt de Shortcut-stories op die op mijn naam staan en al mijn open PR's (over alle repo's), laat zien wat er sinds gisteren 16:00 is veranderd (maandag: sinds vrijdag) en zet per PR en story de volgende actie in een geprioriteerde lijst voor vandaag. Per story vergelijkt hij de Shortcut-state met de **live** PR- en deploystatus (gemerged? op staging? live?) en stelt state-wissels voor die alleen na jouw akkoord worden doorgevoerd. Verder read-only: merget of plaatst niets. Staat los van de story-workflow. |
+| `poc-pulse` | `/poc-pulse <wat de poc moet laten zien>` | Maakt van **één zin** een snelle, klikbare **POC in Pulse** om via window sharing te laten zien: korte verkenning, echte lokale data, alleen Pulse-componenten, een smoke-check en op verzoek een deploy naar een staging-kanaal. Wegwerpwerk op een `poc/`-branch: geen tests, geen PR. Staat los van de story-workflow. |
 
 De drie story-skills volgen dezelfde basis, die begint met een **hervatten-check (stap 0)**:
 bestaat er al een branch, PR of plan voor deze story, dan stelt de workflow voor om daar
@@ -65,8 +66,10 @@ skills/
 │   └── SKILL.md           ← /create-story <intentie> (los van de basis)
 ├── uitleg/
 │   └── SKILL.md           ← /uitleg <onderwerp> (los van de basis)
-└── create-demo/
-    └── SKILL.md           ← /create-demo <sprint> <gebruiker> (los van de basis)
+├── create-demo/
+│   └── SKILL.md           ← /create-demo <sprint> <gebruiker> (los van de basis)
+└── poc-pulse/
+    └── SKILL.md           ← /poc-pulse <zin> (los van de basis)
 ```
 
 ## Installeren
