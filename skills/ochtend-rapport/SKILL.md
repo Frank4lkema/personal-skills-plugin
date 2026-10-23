@@ -212,6 +212,23 @@ Sinds <peilmoment>: <n> nieuwe review(s), <n> nieuwe comment(s), <n> PR('s) van 
 
 Laat lege secties weg. Is er niets nieuws sinds het peilmoment, zeg dat in één zin.
 
+### Actiepaneel
+
+Is de tool `mcp__ochtend-acties__zet_acties` beschikbaar (de `ochtend-acties`-mod), zet dan
+na het rapport elke regel uit *Vandaag doen* en elke voorgestelde state-wissel als knop in
+het paneel. Per actie:
+
+- `id`: stabiel en uniek, bv. `merge-product-3392` of `state-130608-done`;
+- `label`: kort, bv. `Merge product#3392` of `sc-130608 → Done`;
+- `detail`: de *waarom*-zin uit het rapport;
+- `groep`: de prioriteitsgroep uit stap 5, of `State bijwerken` voor state-wissels;
+- `prompt`: wat er gebeurt bij een druk. Bestaat er een command voor, gebruik dat
+  (`/pull-request-feedback 136249`, `/bug-story 136969`). Anders een concrete opdracht,
+  bv. `Merge websend/product#3392 na een laatste check op CI en threads.` of
+  `Zet sc-130608 via de shortcut-story-api-skill naar Done.`
+
+Een druk op een knop is mijn akkoord voor precies die actie. Niet beschikbaar? Sla dit over.
+
 Sluit af met twee vragen:
 
 1. **Welke state-wissels mag ik doorvoeren?** Standaard: **geen**. Voer alleen de
