@@ -45,8 +45,9 @@ antwoord kan geven? Dan sla je de keuzegate in stap 3 over en volg je deze vaste
 - Patch elk package naar de doelversie uit stap 2, en **niets anders**.
 - **Kruist de doelversie een major → niet patchen.** Zet hem in het eindrapport als "vraagt
   een major, eigen story nodig".
-- **Haalt `--conservative` de doelversie niet → niet patchen.** Nooit `--force`, nooit een
-  handmatige `Gemfile`-pin, nooit een kale `bundle update`. Zet in het rapport wát het blokkeert.
+- **Haalt de conservatieve bump uit stap 4 de doelversie niet → niet patchen.** Nooit `--force`,
+  nooit een handmatige `Gemfile`-pin of nieuwe `resolutions`-regel, nooit een kale
+  `bundle update`. Zet in het rapport wát het blokkeert.
 - Bestaat er al een open PR met dezelfde branchnaam → overslaan en melden.
 - Zijn de tests rood? **Open de PR toch**, met `Tests: rood: <wat faalt>` in de body — dan
   ziet een mens het. Verzin geen fixes voor falende tests die niets met de bump te maken hebben.
@@ -76,6 +77,8 @@ gh api "repos/$REPO/dependabot/alerts?state=open" --paginate \
   ```bash
   gem install bundler-audit && bundle-audit check --update
   ```
+- **Geen GitHub-toegang, wel JavaScript?** `yarn audit` bij een `yarn.lock`, `npm audit` bij
+  een `package-lock.json`.
 - Snel zelf kijken kan ook: `https://github.com/<owner>/<repo>/security/dependabot`.
 
 ## 2. Doelversie per package bepalen
@@ -86,7 +89,8 @@ Meerdere alerts kunnen hetzelfde package raken. Bepaal per package **één** doe
   lagere versie dicht niet elke advisory.
 - **Alerts zonder `first_patched_version` sla je over.** Daar bestaat nog geen fix voor; noem
   ze apart in je overzicht zodat ik weet dat ze blijven staan.
-- Groepeer per ecosystem (`rubygems`, `npm`, …); de bump-commando's verschillen.
+- Groepeer per ecosystem (`rubygems`, `npm`, …); de bump-commando's verschillen. Let op:
+  Dependabot noemt een yarn-app óók `npm`. Of het npm of yarn is, bepaalt de lockfile (stap 4).
 
 Kruist die doelversie een **major**? Dan is het geen patch maar een upgrade: **stop en vraag
 het mij**. Een major-bump hoort een eigen story te zijn, niet de bijvangst van een security-run.
@@ -152,18 +156,44 @@ git diff --stat Gemfile.lock
 grep -E "^    <package> \(" Gemfile.lock            # check: is de doelversie gehaald?
 ```
 
-**JavaScript (`npm`)**:
+**JavaScript (`npm`-ecosystem)** — niet elke app draait op npm, een deel gebruikt **yarn**.
+De lockfile beslist: `package-lock.json` → npm, `yarn.lock` → yarn. Liggen er allebei, dan
+telt de tool die `Dockerfile` en `ci/` draaien; de andere lockfile laat je met rust. Gebruik
+nooit de andere tool: npm in een yarn-app maakt een `package-lock.json` aan en herschrijft
+`yarn.lock` in npm-stijl.
+
+npm (`package-lock.json`):
 
 ```bash
 npm update <package>          # of: npm audit fix   (zonder --force)
 git diff --stat package-lock.json
 ```
 
+yarn (`yarn.lock`, Yarn 1): haal alle blokken van het package uit `yarn.lock` en laat yarn ze
+opnieuw resolven binnen de bestaande ranges. Alleen `yarn.lock` hoort te veranderen; de `grep`
+laat per blok zien op welke versie het package nu staat:
+
+```bash
+awk -v p="<package>@" '/^[^ #]/ { k = ", " $0; gsub(/"/, "", k); s = index(k, ", " p) || index(k, "npm:" p) } !s' yarn.lock > yarn.lock.tmp && mv yarn.lock.tmp yarn.lock
+yarn install
+git status --short
+grep -A1 -E '(^|, |npm:)"?<package>@' yarn.lock
+```
+
+- **Gebruik geen `yarn upgrade <package>`.** Bij een transitieve dependency verandert die
+  niets en meldt hij toch `success`; met een versie erbij (`<package>@<versie>`) zet hij het
+  package als nieuwe directe dependency in `package.json`.
+- Haalt het de doelversie niet? `yarn why <package>` laat zien welke dependency hem vasthoudt.
+- Staat het package al in `resolutions` in `package.json`? Dan pint die de versie en helpt het
+  weghalen uit de lockfile niet. Zet die pin op de doelversie, draai `yarn install` en noem het
+  in de PR-body. Een **nieuwe** `resolutions`-regel is een handmatige pin — zie hieronder.
+
 Regels bij het bumpen:
 
-- Haalt de conservatieve bump de doelversie **niet** (een andere dependency pint het gem
-  vast)? **Ga niet zelf lopen forceren** met `--force`, `bundle update` zonder gem, of een
-  handmatige `Gemfile`-pin. Meld wat het blokkeert en vraag hoe ik het wil.
+- Haalt de conservatieve bump de doelversie **niet** (een andere dependency pint het gem of
+  package vast)? **Ga niet zelf lopen forceren** met `--force`, `bundle update` zonder gem, een
+  handmatige `Gemfile`-pin of een nieuwe `resolutions`-regel. Meld wat het blokkeert en vraag
+  hoe ik het wil.
 - Beweegt er meer in de lockfile dan dit ene package? Noem dat expliciet in de PR-body — dat
   is precies wat een reviewer wil weten.
 - Raak `Gemfile`/`package.json` alleen aan als het echt moet (een versie-pin die de fix
@@ -176,6 +206,8 @@ Draai de checks van de repo voordat je een PR opent — een lockfile-wijziging i
 
 - de testsuite (of minimaal de suite die deze dependency raakt)
 - de linter, als die in deze repo bij CI hoort
+- bij een JavaScript-bump ook de build-scripts uit `package.json`, met de tool van de app
+  (bv. `yarn build` en `yarn build:css`, of `npm run build`)
 
 Falen ze? Herstel of, als het niet lukt, open de PR **wel** maar zet in de body expliciet
 dat de suite rood is en wat er faalt. Verzwijg dat nooit.
