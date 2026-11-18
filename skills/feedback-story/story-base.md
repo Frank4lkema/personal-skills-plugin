@@ -380,8 +380,10 @@ context. Kies die reviewer in deze volgorde:
    dan Claude. Per harness:
    - **Paseo:** controleer met `list_providers` dat de provider (`codex`) `available` is en
      met `list_models` dat `gpt-5.6-sol` erin staat, en start de reviewer met `create_agent`
-     (`provider: codex/gpt-5.6-sol`). Paseo kent voor Codex geen read-only modus: zet in de
-     prompt expliciet dat de reviewer niets wijzigt, commit of pusht.
+     (`provider: codex/gpt-5.6-sol`, `settings.modeId: "auto"`; Paseo neemt de modus niet
+     over van een Claude-hoofdagent en weigert de start zonder expliciete modus). Paseo kent
+     voor Codex geen read-only modus: zet in de prompt expliciet dat de reviewer niets
+     wijzigt, commit of pusht.
    - **Codex-CLI zonder Paseo:**
      `codex exec --model gpt-5.6-sol --sandbox read-only "<reviewprompt>"` vanuit de worktree.
    - **Pi met pi-subagents:** de rol `reviewer`, op `gpt-5.6-sol` als dat in Pi
