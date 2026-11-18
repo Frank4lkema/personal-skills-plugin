@@ -413,6 +413,32 @@ provider en meld dat. Heeft het harness geen subagents, voer deze controle zelf 
 dat een onafhankelijke review ontbreekt. Faalt ook de terugval-reviewer: stop, meld de fout
 en vraag hoe verder.
 
+### 6a. Reviewerbevindingen direct vastleggen in Obsidian
+
+Leg de reviewerbevindingen vast **zodra je ze hebt verwerkt, nog vóór Plannotator Review en
+de PR**. Wacht niet tot stap 13. Maak daarvoor nu al de Dev Log-notitie van stap 13 aan
+(`Dev Log/sc-<STORY_ID>.md`, via de Obsidian MCP, met dezelfde padregels als in stap 13).
+Vul de kopvelden die je al weet (datum, type, branch, worktree) en zet de overige op
+`nog open`. Voeg deze sectie toe:
+
+```markdown
+## Reviewer
+
+### Ronde 1 — <provider>/<model> (<datum>)
+- **Terugval:** <nee | ja — reden, bv. "Codex: usage limit bereikt">
+- **Bevindingen:**
+  1. <bevinding, kort> — `<bestand:regel>`
+     **Besluit:** <overgenomen | niet overgenomen | aan mij voorgelegd> — <reden>
+     **Fix:** <commit-sha + korte omschrijving | n.v.t.>
+  2. …
+- **Geen bevindingen?** Schrijf dat expliciet op.
+```
+
+Elke herbeoordeling krijgt een eigen `### Ronde N` eronder; overschrijf eerdere rondes niet.
+Neem de bevindingen zo letterlijk mogelijk over, ook de afgewezen, zodat later te analyseren
+is wat de reviewer vond en wat er anders ging. Is de Obsidian MCP niet beschikbaar en is het
+vaultpad onbekend, meld dat dan en vraag waar je het moet vastleggen voordat je verdergaat.
+
 Doe daarna vóór de PR een self-review van de wijzigingen met **Plannotator Review** op de
 huidige worktree:
 
@@ -512,6 +538,9 @@ wijzigen. Zodra Greptile heeft gereageerd:
 5. Verwerk daarna alleen de comments waarvoor ik akkoord heb gegeven. Draai de relevante
    checks opnieuw, toon kort de uiteindelijke diff ten opzichte van de eerder goedgekeurde
    implementatie, en push en reageer pas daarna zoals hieronder beschreven.
+6. Werk direct daarna de sectie `## Greptile` in de Dev Log-notitie uit stap 6a bij: per
+   comment het besluit, de reden en de fix-commit. Doe dit vóór stap 10–11, dus vóór een
+   eventuele staging-deploy.
 
 Wijst een comment op een echt probleem maar zou de oplossing het goedgekeurde plan merkbaar
 veranderen, leg dan eerst alternatieven voor in plaats van Greptiles oplossing automatisch
@@ -721,9 +750,11 @@ opnieuw om een UI-check.
 
 ## 13. Vastleggen in Obsidian
 
-Leg de afgeronde story vast in je Obsidian-vault via de **Obsidian MCP**. Maak een nieuwe
-notitie aan (of werk een bestaande bij) met een korte samenvatting, zodat je een
-doorzoekbaar dev-logboek opbouwt.
+Leg de afgeronde story vast in je Obsidian-vault via de **Obsidian MCP**. Meestal bestaat de
+notitie al sinds stap 6a: werk die dan bij en vul de velden die nog op `nog open` staan.
+Laat de secties `## Reviewer` en `## Greptile` staan zoals ze zijn vastgelegd en vul ze
+alleen aan. Bestaat er nog geen notitie (bijvoorbeeld bij een story zonder codewijziging),
+maak hem dan nu aan. Zo bouw je een doorzoekbaar dev-logboek op.
 
 > Pad-voorbeeld: `Dev Log/sc-<STORY_ID>.md`. Gebruik de create/append/update-note-tool van je
 > Obsidian MCP. Is de MCP niet beschikbaar? Meld dat en schrijf alleen rechtstreeks naar de
@@ -750,8 +781,11 @@ Notitie-inhoud (template):
 <bug: de read-only script-output die de oorzaak bevestigde — feedback: de uitkomst van de
 scope-check — feature: n.v.t.>
 
+## Reviewer
+<vastgelegd in stap 6a: per ronde provider/model, terugval, bevindingen, besluit en fix>
+
 ## Greptile
-<besproken besluit per comment + welke goedgekeurde fixes zijn verwerkt / geen comments / timeout>
+<vastgelegd in stap 9: besproken besluit per comment + welke goedgekeurde fixes zijn verwerkt / geen comments / timeout>
 
 ## PO-actie
 <ja: welke route + rechten / nee>

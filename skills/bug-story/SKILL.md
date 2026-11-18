@@ -40,7 +40,7 @@ Volgorde voor een bug-story:
 5. Branch aanmaken uit Shortcut (moet `sc-<STORY_ID>` bevatten)
 6. Zelf het plan uitvoeren en checks draaien in de hoofdcontext — **alleen de bug fixen**,
    geen extra features/refactors tenzij nodig voor de fix.
-7. Eén read-only reviewer, bij voorkeur van een andere provider (Codex) met terugval op Claude, daarna **Plannotator Review**; fixes zelf uitvoeren
+7. Eén read-only reviewer, bij voorkeur van een andere provider (Codex) met terugval op Claude; bevindingen direct in de Obsidian Dev Log; daarna **Plannotator Review**; fixes zelf uitvoeren
 8. Pull request maken
 9. Wachten op Greptile
 10. Greptile-comments samen beoordelen en pas na mijn expliciete akkoord verwerken
