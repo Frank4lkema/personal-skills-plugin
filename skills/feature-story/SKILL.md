@@ -35,7 +35,7 @@ Feature-story = de gedeelde basis zoals hij is:
 3. Plan opstellen via **Plannotator** (annotate → verwerken + beslissingenlog onderaan → akkoord)
 4. Branch aanmaken uit Shortcut (moet `sc-<STORY_ID>` bevatten)
 5. Zelf het plan uitvoeren en checks draaien in de hoofdcontext
-6. Eén aparte read-only reviewer indien beschikbaar, daarna **Plannotator Review**; fixes zelf uitvoeren
+6. Eén read-only reviewer, bij voorkeur van een andere provider (Codex) met terugval op Claude, daarna **Plannotator Review**; fixes zelf uitvoeren
 7. Pull request maken
 8. Wachten op Greptile
 9. Greptile-comments samen beoordelen en pas na mijn expliciete akkoord verwerken

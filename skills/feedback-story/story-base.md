@@ -15,12 +15,12 @@ per harness — stem je aanpak daarop af:
   analyse, planning, uitvoering, tests (ook via de UI) en alle reviewfixes. Houd die context
   bij elkaar: start geen aparte analyse-, uitvoer- of testagents, ook niet per deelvraag of
   repo. Alleen de onafhankelijke review in stap 6 gaat naar één read-only subagent met een
-  verse context. In **Pi met pi-subagents** gebruik je daarvoor de rol `reviewer`; in andere
-  harnessen een gelijkwaardige read-only reviewagent. Modelkeuze blijft harness-configuratie.
+  verse context, bij voorkeur op een model van een **andere provider** dan de hoofdagent
+  (hoofdagent Claude → reviewer OpenAI/Codex), met terugval op de eigen provider als die
+  andere provider geen ruimte heeft. Zie stap 6 voor de volgorde per harness.
   De hoofdagent blijft de enige writer. Heeft het harness geen subagents, doe dan zelf de
-  review en meld dat die niet onafhankelijk is. Zijn subagents wél beschikbaar maar faalt
-  hun infrastructuur of start, schakel dan niet stilzwijgend over: meld de fout en vraag
-  hoe verder te gaan.
+  review en meld dat die niet onafhankelijk is. Faalt ook de terugval-reviewer, schakel dan
+  niet stilzwijgend over: meld de fout en vraag hoe verder te gaan.
 - **Kwaliteitschecks.** Draaien er hooks die automatisch formatten, linten, testen en
   route-detectie doen (typische Claude Code-setup)? Vertrouw daarop. Zo niet (bv. Pi)?
   Draai de stack-specifieke formatter, linter, tests en route-check dan zélf expliciet, en
@@ -373,7 +373,32 @@ hele repo die ongerelateerde bestanden kan wijzigen.
 ## 6. Self-review (reviewer + Plannotator Review)
 
 Gebruik, als je harness subagents ondersteunt, één aparte, read-only reviewer met een verse
-context (in **Pi met pi-subagents**: `reviewer`). Geef het goedgekeurde plan inclusief
+context. Kies die reviewer in deze volgorde:
+
+1. **Andere provider dan de hoofdagent.** Draai je zelf op Claude, dan via Codex het
+   OpenAI-model **`gpt-5.6-sol`** (niet het default-model `gpt-6-astra`); draai je op OpenAI,
+   dan Claude. Per harness:
+   - **Paseo:** controleer met `list_providers` dat de provider (`codex`) `available` is en
+     met `list_models` dat `gpt-5.6-sol` erin staat, en start de reviewer met `create_agent`
+     (`provider: codex/gpt-5.6-sol`). Paseo kent voor Codex geen read-only modus: zet in de
+     prompt expliciet dat de reviewer niets wijzigt, commit of pusht.
+   - **Codex-CLI zonder Paseo:**
+     `codex exec --model gpt-5.6-sol --sandbox read-only "<reviewprompt>"` vanuit de worktree.
+   - **Pi met pi-subagents:** de rol `reviewer`, op `gpt-5.6-sol` als dat in Pi
+     geconfigureerd is.
+
+   Staat `gpt-5.6-sol` niet in de lijst, kies dan geen ander OpenAI-model maar val terug
+   zoals hieronder en meld dat.
+2. **Terugval op de eigen provider (Claude-abonnement)** als de andere provider geen ruimte
+   heeft: provider niet `available`, niet ingelogd, of de start of het antwoord meldt een
+   usage-/rate-limit, quota, onvoldoende credits of een 429. Vooraf is het tegoed niet
+   betrouwbaar te checken; probeer dus en val terug op zo'n fout. Gebruik dan de eigen
+   subagent van het harness (Claude Code: een read-only reviewagent; Paseo: provider
+   `claude`; Pi: `reviewer` op het Claude-model). Wacht niet op een reset van de limiet.
+
+Meld bij de reviewresultaten altijd welke provider en welk model reviewden, en bij een
+terugval waarom (bijv. "Review door Claude — Codex: usage limit bereikt"). Geef het
+goedgekeurde plan inclusief
 codevoorbeelden, de story-acceptatiecriteria, de relevante projectafspraken, de branch/worktree
 met de te beoordelen diff en de uitgevoerde checks mee. Laat de reviewer de wijzigingen
 onafhankelijk controleren en concrete bevindingen met bronverwijzingen teruggeven. Zit er een
@@ -382,9 +407,11 @@ migratie in de diff, laat de reviewer die dan expliciet toetsen aan Strong Migra
 De reviewer wijzigt niets en delegeert niet verder. Beoordeel als hoofdagent de bevindingen,
 voer zelf de nodige correcties uit en draai de relevante checks opnieuw. Laat een correctie
 die het goedgekeurde ontwerp verandert eerst opnieuw goedkeuren. Is een herbeoordeling nodig,
-hergebruik dan waar mogelijk dezelfde reviewer; start geen parallelle reviewers. Heeft het
-harness geen subagents, voer deze controle zelf uit en meld dat een onafhankelijke review
-ontbreekt. Bij een fout in de review-infrastructuur: stop, meld de fout en vraag hoe verder.
+hergebruik dan waar mogelijk dezelfde reviewer; start geen parallelle reviewers. Raakt de
+andere provider tijdens een herbeoordeling op, val dan voor die ronde terug op de eigen
+provider en meld dat. Heeft het harness geen subagents, voer deze controle zelf uit en meld
+dat een onafhankelijke review ontbreekt. Faalt ook de terugval-reviewer: stop, meld de fout
+en vraag hoe verder.
 
 Doe daarna vóór de PR een self-review van de wijzigingen met **Plannotator Review** op de
 huidige worktree:
