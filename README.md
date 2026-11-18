@@ -19,6 +19,7 @@ een gedeelde, stap-voor-stap basis-workflow.
 | `ochtend-rapport` | `/ochtend-rapport [sinds]` | Mijn **dagstart**: haalt de Shortcut-stories op die op mijn naam staan en al mijn open PR's (over alle repo's), laat zien wat er sinds gisteren 16:00 is veranderd (maandag: sinds vrijdag) en zet per PR en story de volgende actie in een geprioriteerde lijst voor vandaag. Per story vergelijkt hij de Shortcut-state met de **live** PR- en deploystatus (gemerged? op staging? live?) en stelt state-wissels voor die alleen na jouw akkoord worden doorgevoerd. Verder read-only: merget of plaatst niets. Staat los van de story-workflow. |
 | `poc-pulse` | `/poc-pulse <wat de poc moet laten zien>` | Maakt van **één zin** een snelle, klikbare **POC in Pulse** om via window sharing te laten zien: korte verkenning, echte lokale data, alleen Pulse-componenten, een smoke-check en op verzoek een deploy naar een staging-kanaal. Wegwerpwerk op een `poc/`-branch: geen tests, geen PR. Staat los van de story-workflow. |
 | `pulse-pull-request-review` | `/pulse-pull-request-review <pr-nummer\|pr-url\|story-id>` | Reviewt een PR **alleen op de Pulse-elementen**: views, forms, filters, tabellen, dialogs en Stimulus-koppelingen langs de regels en de volledige completion audit van de **`pulse-ui`-skill** (rails-toolkit), met per bevinding de regel waarop hij leunt. Read-only: plaatst alleen na akkoord op de exacte tekst één `COMMENT`-review op GitHub. Staat los van de story-workflow. |
+| `review-analyse` | `/review-analyse [periode \| story-ids]` | Gaat door de **reviewerbevindingen** die de story-workflows in de Obsidian Dev Log vastleggen (`## Reviewer` en `## Greptile`), bundelt terugkerende patronen, vergelijkt de reviewers (Codex tegen Claude) en bespreekt de punten **één voor één** met je om er learnings uit te halen. Elk besluit landt direct in `Review Learnings/<datum>.md`; skills of projectafspraken wijzigt hij alleen na akkoord op de exacte tekst. Staat los van de story-workflow. |
 
 De drie story-skills volgen dezelfde basis, die begint met een **hervatten-check (stap 0)**:
 bestaat er al een branch, PR of plan voor deze story, dan stelt de workflow voor om daar
@@ -34,7 +35,8 @@ branch en PR blijven behouden. Alleen een PR openen triggert het opruimen nog ni
 Alle workflows houden onderzoek, analyse, planning, uitvoering, tests en fixes bij de
 **hoofdagent**. Alleen een onafhankelijke review gaat naar **één aparte read-only reviewer**;
 geen losse analyse-, uitvoer- of testagents meer. De story-workflows gebruiken die reviewer
-vóór Plannotator Review. De overige workflows krijgen hierdoor geen extra reviewstap.
+vóór Plannotator Review, bij voorkeur Codex (`gpt-5.6-sol`) met terugval op Claude, en leggen
+de bevindingen direct vast in de Obsidian Dev Log; `/review-analyse` haalt daar learnings uit. De overige workflows krijgen hierdoor geen extra reviewstap.
 Zonder subagentondersteuning doet de hoofdagent ook de review, met de expliciete melding
 dat die niet onafhankelijk is.
 
@@ -71,8 +73,10 @@ skills/
 │   └── SKILL.md           ← /create-demo <sprint> <gebruiker> (los van de basis)
 ├── poc-pulse/
 │   └── SKILL.md           ← /poc-pulse <zin> (los van de basis)
-└── pulse-pull-request-review/
-    └── SKILL.md           ← /pulse-pull-request-review <pr|story> (los van de basis)
+├── pulse-pull-request-review/
+│   └── SKILL.md           ← /pulse-pull-request-review <pr|story> (los van de basis)
+└── review-analyse/
+    └── SKILL.md           ← /review-analyse [periode|story-ids] (los van de basis)
 ```
 
 ## Installeren
