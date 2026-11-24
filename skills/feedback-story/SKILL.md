@@ -66,7 +66,7 @@ Volgorde voor een feedback-story:
    dat je in 2b hebt vastgesteld**. Loopt het tijdens de uitvoering alsnog uit, stop dan en
    neem de Afslag alsnog; maak het niet stilzwijgend groter.
 7. Eén read-only reviewer, bij voorkeur van een andere provider (Codex) met terugval op Claude; bevindingen direct in de Obsidian Dev Log; daarna **Plannotator Review**; fixes zelf uitvoeren
-8. Pull request maken
+8. Pull request maken, plus de `**Risk:**`-regel als de repo een `change-risk`-skill heeft (basis-stap 7a)
 9. Wachten op Greptile
 10. Greptile-comments samen beoordelen en pas na mijn expliciete akkoord verwerken
 11. Nieuwe route? → PO-/rechtencomment voorleggen en alleen na mijn akkoord onder de story plaatsen

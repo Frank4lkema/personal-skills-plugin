@@ -485,7 +485,37 @@ gh pr create --title "<type>: <korte omschrijving> [sc-<STORY_ID>]" \
 - **PR-beschrijving = maximaal 2 zinnen**, die duidelijk maken **wat er is aangepast**.
   Geen lange opsommingen, geen test-plan-secties, geen boilerplate. Gebruik daarom
   `--body` (hierboven), niet `--fill` (die plakt de volledige commit-body erin).
+  Enige toevoeging: de `**Risk:**`-regel uit stap 7a.
 - Zet `[sc-<STORY_ID>]` in de commit/PR zodat Shortcut alles aan de story koppelt.
+
+### 7a. Risico-regel toevoegen (als de repo een `change-risk`-skill heeft)
+
+Kijk direct na `gh pr create` of de repo een `change-risk`-skill heeft, bijvoorbeeld
+`.agents/skills/change-risk/SKILL.md` (Mother5) of `.claude/skills/change-risk/SKILL.md`,
+of dat `AGENTS.md`/`CLAUDE.md` ernaar verwijst. Zo niet, sla deze stap over.
+
+Zo ja:
+
+1. Lees die `SKILL.md` en volg hem op de diff van de PR, tegen de merge base met de
+   base-branch van de PR. Lees de hele diff, ook de referentiebestanden van de skill (zoals
+   `references/high-risk-paths.md`).
+2. Zet de **PR-regel** uit de skill onder de 2 zinnen, gescheiden door een lege regel:
+
+   ```bash
+   gh pr edit --body-file - <<'EOF'
+   <max 2 zinnen: wat er is aangepast>
+
+   **Risk:** <Low|Medium|High>. <hoofdreden>
+   EOF
+   ```
+
+3. Laat mij het volledige rapport (per bestand, **Verification** en **Rollback**) in de chat
+   zien. Dat rapport hoort niet in de PR-beschrijving; alleen de ene `**Risk:**`-regel.
+4. Is de uitkomst `Risk: Unassessed`, zet dan geen regel in de PR. Meld welk deel van de diff
+   ontbrak en vraag hoe verder te gaan.
+
+Verander de code later nog (fixes uit stap 9), draai de skill dan opnieuw en werk de
+`**Risk:**`-regel bij met `gh pr edit`.
 
 > Draait er een `verify-done` Stop-hook (Claude Code-setup)? Die laat je pas "klaar" zijn als
 > build + tests slagen. Zonder zo'n hook: zeg zelf pas dat het werk klaar is als de relevante
@@ -537,7 +567,8 @@ wijzigen. Zodra Greptile heeft gereageerd:
    planakkoord is geen goedkeuring van Greptile-voorstellen.
 5. Verwerk daarna alleen de comments waarvoor ik akkoord heb gegeven. Draai de relevante
    checks opnieuw, toon kort de uiteindelijke diff ten opzichte van de eerder goedgekeurde
-   implementatie, en push en reageer pas daarna zoals hieronder beschreven.
+   implementatie, en push en reageer pas daarna zoals hieronder beschreven. Heeft de PR een
+   `**Risk:**`-regel (stap 7a), beoordeel de diff dan opnieuw en werk die regel bij.
 6. Werk direct daarna de sectie `## Greptile` in de Dev Log-notitie uit stap 6a bij: per
    comment het besluit, de reden en de fix-commit. Doe dit vóór stap 10–11, dus vóór een
    eventuele staging-deploy.

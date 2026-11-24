@@ -36,7 +36,7 @@ Feature-story = de gedeelde basis zoals hij is:
 4. Branch aanmaken uit Shortcut (moet `sc-<STORY_ID>` bevatten)
 5. Zelf het plan uitvoeren en checks draaien in de hoofdcontext
 6. Eén read-only reviewer, bij voorkeur van een andere provider (Codex) met terugval op Claude; bevindingen direct in de Obsidian Dev Log; daarna **Plannotator Review**; fixes zelf uitvoeren
-7. Pull request maken
+7. Pull request maken, plus de `**Risk:**`-regel als de repo een `change-risk`-skill heeft (basis-stap 7a)
 8. Wachten op Greptile
 9. Greptile-comments samen beoordelen en pas na mijn expliciete akkoord verwerken
 10. Nieuwe route? → PO-rechten onder de story

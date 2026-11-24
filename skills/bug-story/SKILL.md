@@ -41,7 +41,7 @@ Volgorde voor een bug-story:
 6. Zelf het plan uitvoeren en checks draaien in de hoofdcontext — **alleen de bug fixen**,
    geen extra features/refactors tenzij nodig voor de fix.
 7. Eén read-only reviewer, bij voorkeur van een andere provider (Codex) met terugval op Claude; bevindingen direct in de Obsidian Dev Log; daarna **Plannotator Review**; fixes zelf uitvoeren
-8. Pull request maken
+8. Pull request maken, plus de `**Risk:**`-regel als de repo een `change-risk`-skill heeft (basis-stap 7a)
 9. Wachten op Greptile
 10. Greptile-comments samen beoordelen en pas na mijn expliciete akkoord verwerken
 11. Nieuwe route? → PO-rechten onder de story
