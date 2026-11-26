@@ -40,6 +40,12 @@ de bevindingen direct vast in de Obsidian Dev Log; `/review-analyse` haalt daar 
 Zonder subagentondersteuning doet de hoofdagent ook de review, met de expliciete melding
 dat die niet onafhankelijk is.
 
+De story-workflows hebben ook vaste **communicatieregels**, omdat ze over meerdere sessies
+lopen. Elk bericht waarin de agent op je wacht, begint met de stand (`Stap 6 van 13 klaar: …
+Volgende: …`) en eindigt met één concrete vraag. Bijvangst komt apart aan het eind en fouten
+worden feitelijk gemeld. Na drie mislukte pogingen stopt de agent en benoemt hij de aanname
+die waarschijnlijk niet klopt.
+
 De inhoud is **harness-agnostisch** geschreven: waar Claude Code en Pi verschillen
 (subagents, hooks, arg-injectie, reviewbot-watcher) kiest de workflow de juiste aanpak op
 basis van wat je harness kan. Zo is er één bron voor beide. `allowed-tools` staat bewust

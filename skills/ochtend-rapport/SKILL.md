@@ -212,6 +212,12 @@ Sinds <peilmoment>: <n> nieuwe review(s), <n> nieuwe comment(s), <n> PR('s) van 
 
 Laat lege secties weg. Is er niets nieuws sinds het peilmoment, zeg dat in één zin.
 
+Zet in *Vandaag doen* hoogstens vijf acties, met de belangrijkste bovenaan. Actie 1 moet
+iets zijn wat ik meteen kan starten, dus bij voorkeur een command of een link. Zijn er meer
+dan vijf acties, zet de rest dan in één regel onder `Daarna: <n> acties`, en noem die pas
+als ik erom vraag of als de eerste vijf klaar zijn. Laat geen actie weg uit de tabellen
+of het actiepaneel: de limiet geldt alleen voor deze lijst.
+
 ### Actiepaneel
 
 Is de tool `mcp__ochtend-acties__zet_acties` beschikbaar (de `ochtend-acties`-mod), zet dan

@@ -29,6 +29,45 @@ per harness — stem je aanpak daarop af:
 Deze basis is het *recept* en bepaalt de volgorde. Werk met een zichtbare TODO-lijst zodat
 geen stap wordt overgeslagen; voeg geen tijdelijk `TODO.md` aan de repository toe.
 
+### Zo communiceer je met mij
+
+De workflow loopt over meerdere sessies en ik schakel ertussen naar ander werk. Ga er dus
+van uit dat ik niet meer weet waar we waren. Elk bericht moet zonder de vorige te lezen
+duidelijk zijn.
+
+- **Begin met de stand of de actie.** Wacht je op mij, dan begint je bericht met een
+  voortgangsregel: `Stap 6 van 13 klaar: reviewer heeft 2 punten gevonden, beide gefixt.
+  Volgende: PR openen.` Daarna komt pas de toelichting. De TODO-lijst laat het hele plan
+  zien, dus herhaal dat plan niet in tekst.
+- **Eindig met één concrete vraag of actie.** Als je op mij wacht, sluit je af met precies
+  één ding dat ik nu kan doen of beslissen, bijvoorbeeld `Akkoord op het plan?` of
+  `Met welk e-mailadres mag ik testen?`. Zet er geen tweede vraag naast en eindig niet met
+  "laat maar weten" of "hoop dat dit helpt".
+- **Bijvangst bewaar je tot het eind.** Zie je tijdens een stap een tweede probleem buiten
+  de story, maak dan eerst de huidige stap af. Noem het daarna één keer, apart, als
+  `Los hiervan: <probleem>. Wil je daar een story van?` Pak het niet ongevraagd op.
+- **Meld fouten feitelijk.** Noem de plek, wat je verwachtte, wat je kreeg, de oorzaak en de
+  fix. Bijvoorbeeld: `Faalt op spec/models/order_spec.rb:42: verwacht 200, kreeg 401.
+  Oorzaak: auth-header ontbreekt.` Schrijf geen "helaas", "oeps" of "er lijkt iets mis te
+  gaan".
+- **Stop na drie mislukte pogingen.** Faalt dezelfde test of check drie keer achter elkaar
+  na een fixpoging, ga dan niet verder met de code. Benoem de aanname die waarschijnlijk niet
+  klopt en doe één gerichte diagnose of stel mij één diagnostische vraag.
+- **Toon kleine groepen, maar laat niets weg.** Toon per groep hoogstens vijf punten, met
+  het belangrijkste eerst. Bundel verwante punten. Dit gaat alleen over de presentatie: wat
+  ertoe doet blijft in het onderzoek, de review en de Obsidian-notitie staan.
+- **Geen aankondiging, recap of afsluiter.** Begin niet met "Ik ga nu…" of "Goede vraag".
+  Vat na een stap niet samen wat je net hebt gedaan. Schrijf ook geen afsluitende
+  beleefdheden.
+
+Uitzondering: de uitleg in stap 2 en het plan in stap 3 mogen zo lang zijn als nodig. Gebruik
+daar koppen, zodat ik kan scannen. Gaan je stijlregels en een harde gate uit deze workflow
+tegen elkaar in, dan wint de gate. Een veiligheidsvraag of een bevestiging vóór een
+destructieve actie sla je dus nooit over om kort te blijven.
+
+**Check vóór het versturen:** lees alleen de eerste en de laatste regel. Weet ik daarmee wat
+er net gebeurd is en wat ik nu moet doen? Zo niet, herschrijf het begin of het einde.
+
 **Geldt voor élke commit in deze workflow (niet alleen de PR-stap):** zet NOOIT een
 `Co-authored-by: ... Anthropic`/`Claude`-trailer of andere AI-attributie ("Generated with
 Claude" e.d.) in een commit-message. Commit op naam van de gebruiker, zonder co-author.
@@ -868,7 +907,9 @@ stap. Een blokkade is geen reden om opruimen stilzwijgend over te slaan.
 
 ## Afronden
 
-Rapporteer beknopt: branch-naam (en het worktree-pad + de poort als je er een hebt
+Begin met één regel over wat er nu concreet werkt, in termen van gedrag en niet van
+bestanden. Bijvoorbeeld: `Facturen zijn nu te filteren op status — te zien op /invoices als
+beheerder.` Rapporteer daarna beknopt: branch-naam (en het worktree-pad + de poort als je er een hebt
 aangemaakt), wat is gebouwd/gefixt, PR-link, Greptile-status, eventuele
 PO-actie onder de story, het staging-kanaal + de naam (of dat er niet gedeployed is), de
 testuitkomst (met welke gebruiker getest, en wat je niet hebt kunnen testen), en het pad van
